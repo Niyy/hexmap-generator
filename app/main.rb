@@ -1,5 +1,6 @@
 $hex_outline = [-16, -16, 32, 32, "sprites/hex_outline.png"]
 $degrees_to_rads = Math::PI / 180
+$rads_to_degrees = 180 / Math::PI
 
 
 def tick args
@@ -17,14 +18,21 @@ end
 
 
 def gridSnap args, hex_outline
-    if args.inputs.mouse.x % 16 <= 1
-        hex_outline.x = args.inputs.mouse.x - 16
+    polar_cord = Math.atan2(args.inputs.mouse.y - $hex_outline[0], args.inputs.mouse.x - $hex_outline[1])
+    mouse_holder = 
+
+    if(distance args.inputs.mouse, $hex_outline) == 16.0
+        $hex_outline[0] = args.inputs.mouse.x - 16
+        $hex_outline[1] = args.inputs.mouse.y - 16
     end
-    if args.inputs.mouse.y % 16 <= 1
-        hex_outline.y = args.inputs.mouse.y - 16
-    end
+
+    puts distance args.inputs.mouse, $hex_outline
 end
 
 
-def distance args
+def distance current, destination
+    x_squared = (destination.x - current.x) ** 2
+    y_squared = (destination.y - current.y) ** 2
+
+    return Math.sqrt(x_squared + y_squared)
 end
