@@ -1,4 +1,4 @@
-$hex_outline = [-16, -16, 32, 32, "sprites/hex_outline.png"]
+$hex_outline = [0, 0, 32, 32, "sprites/hex_outline.png"]
 $degrees_to_rads = Math::PI / 180
 $rads_to_degrees = 180 / Math::PI
 
@@ -18,15 +18,15 @@ end
 
 
 def gridSnap args, hex_outline
-    polar_cord = Math.atan2(args.inputs.mouse.y - $hex_outline[0], args.inputs.mouse.x - $hex_outline[1])
-    mouse_holder = 
+    mouse_holder = [args.inputs.mouse.x - 16, args.inputs.mouse.y - 16]
+    polar_cord = Math.atan2(mouse_holder.y - $hex_outline[0], mouse_holder.x - $hex_outline[1])
 
-    if(distance args.inputs.mouse, $hex_outline) == 16.0
-        $hex_outline[0] = args.inputs.mouse.x - 16
-        $hex_outline[1] = args.inputs.mouse.y - 16
+    if distance(mouse_holder, $hex_outline) <= 30.0 && distance(mouse_holder, $hex_outline) >= 28.0
+        $hex_outline[0] = $hex_outline[0] + (Math.cos(polar_cord) * 30)
+        $hex_outline[1] = $hex_outline[1] + (Math.sin(polar_cord) * 30)
     end
 
-    puts distance args.inputs.mouse, $hex_outline
+    puts distance mouse_holder, $hex_outline
 end
 
 
