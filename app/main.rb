@@ -31,22 +31,6 @@ $degrees_to_rads = Math::PI / 180
 $rads_to_degrees = 180 / Math::PI
 
 
-$grid = Hash.new
-$start_x = -1280 / 2
-$start_y = -780 / 2
-$current_x
-$current_y 
-$step = 32
-$amount = 1280 / 32
-
-for i in 0..$amount do
-    $current_x ||= $start_x
-    $current_y ||= $start_y
-
-    $grid[[$start_x, $start_y]] = [start_x, start_y, 32, 32, "sprites/hex_outline.png"]
-end
-
-
 # def distance current, destination
 #     x_squared = (destination.x - current.x) ** 2
 #     y_squared = (destination.y - current.y) ** 2
