@@ -1,38 +1,87 @@
+# 1280x720
+
+class Tile
+    attr_accessor :inputs, :tile_info, :outputs, :grid, :args, :neighbors
+    @degrees_to_rads = Math::PI / 180
+    @rads_to_degrees = 180 / Math::PI
+
+    def giveNeighbor tile
+        angle = findAngleFrom(tile)
+
+        if(angle == 30)
+            puts "Neighbor: ", angle
+        else
+            puts "Neighbor: ", angle % 90
+        end
+    end
+
+    def findAngleFrom tile
+        polar_cord = Math.atan2(sprite.y - position.y, sprite.x - position.x)
+        return polar_cord * rads_to_degrees
+    end
+
+    def draw
+        outputs.sprites << tile_info
+    end
+end
+
+
 $hex_outline = [0, 0, 32, 32, "sprites/hex_outline.png"]
 $degrees_to_rads = Math::PI / 180
 $rads_to_degrees = 180 / Math::PI
 
 
-def tick args
-    args.grid.origin_center!
-    gridSnap(args, $hex_outline)
+$grid = Hash.new
+$start_x = -1280 / 2
+$start_y = -780 / 2
+$current_x
+$current_y 
+$step = 32
+$amount = 1280 / 32
 
-    for i in 0..5 do
-        radians = (30 + (60 * i)) * $degrees_to_rads
-        args.outputs.sprites << [Math.cos(radians) * 30, Math.sin(radians) * 30, 32, 32, "sprites/hex_grass_plain.png"]
-    end
+for i in 0..$amount do
+    $current_x ||= $start_x
+    $current_y ||= $start_y
 
-    args.outputs.sprites << [0, 0, 32, 32, "sprites/hex_grass_plain.png"]
-    args.outputs.sprites << $hex_outline
+    $grid[[$start_x, $start_y]] = [start_x, start_y, 32, 32, "sprites/hex_outline.png"]
 end
 
 
-def gridSnap args, hex_outline
-    mouse_holder = [args.inputs.mouse.x - 16, args.inputs.mouse.y - 16]
-    polar_cord = Math.atan2(mouse_holder.y - $hex_outline[0], mouse_holder.x - $hex_outline[1])
+# def distance current, destination
+#     x_squared = (destination.x - current.x) ** 2
+#     y_squared = (destination.y - current.y) ** 2
 
-    if distance(mouse_holder, $hex_outline) <= 30.0 && distance(mouse_holder, $hex_outline) >= 28.0
-        $hex_outline[0] = $hex_outline[0] + (Math.cos(polar_cord) * 30)
-        $hex_outline[1] = $hex_outline[1] + (Math.sin(polar_cord) * 30)
-    end
+#     return Math.sqrt(x_squared + y_squared)
+# end
 
-    puts distance mouse_holder, $hex_outline
-end
+# $tile = Tile.new
+# def tick args
+#     $tile.outputs = args.outputs
+#     args.grid.origin_center!
+#     #gridSnap(args, $hex_outline)
+    
+#     for i in 0..5 do
+#         radians = (30 + (60 * i)) * $degrees_to_rads
+#         cos = Math.cos(radians)
+#         sin = Math.sin(radians)
+#         sprite_info = [cos * 31, sin * 31, 32, 32, "sprites/hex_grass.png"]
 
+#         if sin < 0
+#             sprite_info.y += 0.5
+#         elsif sin > 0
+#             sprite_info.y -= 0.9
+#         end
 
-def distance current, destination
-    x_squared = (destination.x - current.x) ** 2
-    y_squared = (destination.y - current.y) ** 2
+#         if cos < 0.1
+#             sprite_info.x += 0.9
+#         elsif cos > 0.1
+#             sprite_info.x -= 0.5
+#         end
+        
+#         args.outputs.sprites << sprite_info
+#     end
 
-    return Math.sqrt(x_squared + y_squared)
-end
+#     $tile.tile_info = [0, 0, 32, 32, "sprites/hex_grass.png"]
+#     $tile.draw
+#     #args.outputs.sprites << $hex_outline
+# end
