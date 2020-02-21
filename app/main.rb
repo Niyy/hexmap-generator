@@ -39,6 +39,8 @@ $rads_to_degrees = 180 / Math::PI
 # end
 
 # $tile = Tile.new
+$hex_map = Hash.new
+
 def tick args
     offset = 32 / 2
 
