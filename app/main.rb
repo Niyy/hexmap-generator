@@ -55,16 +55,17 @@ class HexGrid
                 outputs.sprites << @grid_positions[[i, j]].getSprite
             end
         end
+        outputs.sprites << state.mouse_position
     end
 
 
     def input
-        # if inputs.mouse.click
-        # for i in 0..52 do
-        #     for j in 0..21 do
-        #         if @grid_positions[[i, j]].getPosit
-        #     end
-        # end
+        if inputs.mouse.click
+           x = ((inputs.mouse.click.x / 32)).floor()
+           y = (inputs.mouse.click.y / 32).floor()
+           puts "X: #{x} Y: #{y}"
+           state.mouse_position = [x, y, 10, 10, "sprites/circle-orange.png"]
+        end
     end
 end
 
