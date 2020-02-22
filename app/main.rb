@@ -67,14 +67,41 @@ class HexGrid
 
     def input
         if inputs.mouse.click
-           x = ((inputs.mouse.click.x / 24)).floor()
-           y = (inputs.mouse.click.y / 30).floor()
-           puts "X: #{x} Y: #{y}"
-           mouse_position = @grid_positions[[x, y]].getSprite
-           state.current_mouse_pos = [mouse_position.x, mouse_position.y, mouse_position.w, mouse_position.h, "sprites/circle-orange.png"]
+            odd_column = false
+
+            x = ((inputs.mouse.click.x.floor() / 24)).floor()
+            y = (inputs.mouse.click.y.floor() / 30).floor()
+
+            if x % 2 > 0
+                y = y - 1
+                odd_column = true
+            end
+
+            mouse_position = @grid_positions[[x, y]].getSprite
+
+            if mouse_position.y > inputs.mouse.click.y && !odd_column
+                 y = y - 1
+                 mouse_position = @grid_positions[[x, y]].getSprite
+                 puts "Does this shoot"
+             end
+
+            state.current_mouse_pos = [mouse_position.x, mouse_position.y, mouse_position.w, mouse_position.h, "sprites/circle-orange.png"]
         end
     end
+
+
+    def getHex i, j
+        return @grid_positions[[i, j]].getSprite
+    end
 end
+
+
+class Continet
+    @root
+end
+
+
+# Global functions
 
 
 $grid = HexGrid.new
