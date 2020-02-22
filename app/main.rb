@@ -5,6 +5,7 @@ class Tile
     attr_gtk
     @position
     @sprite
+    @dimensions
 
     def initialize i_position, i_sprite
         @position = i_position
@@ -19,6 +20,11 @@ class Tile
 
     def getPosition
         return @position
+    end
+
+
+    def getDimensions
+        return [@sprite.w, @sprite.h]
     end
 end
 
@@ -55,16 +61,17 @@ class HexGrid
                 outputs.sprites << @grid_positions[[i, j]].getSprite
             end
         end
-        outputs.sprites << state.mouse_position
+        outputs.sprites << state.current_mouse_pos
     end
 
 
     def input
         if inputs.mouse.click
-           x = ((inputs.mouse.click.x / 32)).floor()
-           y = (inputs.mouse.click.y / 32).floor()
+           x = ((inputs.mouse.click.x / 24)).floor()
+           y = (inputs.mouse.click.y / 30).floor()
            puts "X: #{x} Y: #{y}"
-           state.mouse_position = [x, y, 10, 10, "sprites/circle-orange.png"]
+           mouse_position = @grid_positions[[x, y]].getSprite
+           state.current_mouse_pos = [mouse_position.x, mouse_position.y, mouse_position.w, mouse_position.h, "sprites/circle-orange.png"]
         end
     end
 end
