@@ -34,6 +34,7 @@ end
 # Grid will hold data on all the tiles in the realm.
 # This will be used for a reference for contentents.
 class HexGrid
+    attr_accessor :grid_positions
     attr_gtk
 
     @grid_positions
@@ -100,7 +101,7 @@ class HexGrid
 
 
     def getHex i, j
-        return @grid_positions[[i, j]].getSprite
+        return @grid_positions[[i, j]]
     end
 
 
@@ -121,20 +122,32 @@ class Continet
 
         @root_tile = root
         @tiles = Hash.new
+        @size = 6
 
-        root.path = "sprites/hex_grass.png"
+        root.getSprite.path = "sprites/hex_grass.png"
         cur = root
+        tile_offset = 0
 
-        for i in 0..3 do
-            roll = rng.rand(6)
+        if root.getPosition.x % 2 == 0
+            tile_offset = 1
+        end
 
-            case roll
+        for i in 0...@size do
+            #roll = rng.rand(6)
+
+            case i
             when 0
-                grid[[cur.x - 1, cur.y + 1]].sprite.path = root.path
+                grid[[cur.position[0] - 1, cur.position[1] + 1 - tile_offset]].getSprite.path = "sprites/circle-black.png"
             when 1
-                grid[[cur.x, cur.y + 1]].sprite.path = root.path
+                grid[[cur.position[0], cur.position[1] + 1]].getSprite.path = "sprites/circle-blue.png"
             when 2
-                grid[[cur.x + 1, cur.y + 1]].sprite.path = root.path
+                grid[[cur.position[0] + 1, cur.position[1] + 1 - tile_offset]].getSprite.path = "sprites/circle-gray.png"
+            when 3
+                grid[[cur.position[0] - 1, cur.position[1] - tile_offset]].getSprite.path = "sprites/circle-red.png"
+            when 4
+                grid[[cur.position[0], cur.position[1] - 1]].getSprite.path = "sprites/circle-yellow.png"
+            when 5
+                grid[[cur.position[0] + 1, cur.position[1] - tile_offset]].getSprite.path = "sprites/circle-violet.png"
             end
         end
     end
@@ -151,7 +164,9 @@ def tick args
     $grid.setUpGrid
     root_x ||= $rng.rand(52)
     root_y ||= $rng.rand(21)
-    #$continet ||= Continet.new($grid.getHex(root_x, root_y), $grid.getGrid)
+
+    $continet = Continet.new($grid.getHex(4, 4), $grid.getGrid)
+    $continet = Continet.new($grid.getHex(9, 4), $grid.getGrid)
 
     $grid.draw
     $grid.input
