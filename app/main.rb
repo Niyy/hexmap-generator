@@ -2,7 +2,9 @@
 
 
 class Tile
+    attr_accessor :position
     attr_gtk
+
     @position
     @sprite
     @dimensions
@@ -33,24 +35,31 @@ end
 # This will be used for a reference for contentents.
 class HexGrid
     attr_gtk
+
     @grid_positions
+    @set_up
 
     def setUpGrid
-        @grid_positions ||= Hash.new
-        offset = 32 / 2
 
-        for i in 0..52 do
-            for j in 0..21 do
-                x = i * 24
-                y = (j * 30) + 32 - offset
-                @grid_positions[[i, j]] = Tile.new([x+16,j+16], [x, y, 32, 32, "sprites/hex_outline.png"])
+        if @grid_positions.nil?
+            @grid_positions ||= Hash.new
+            offset = 32 / 2
+
+            for i in 0..52 do
+                for j in 0..21 do
+                    x = i * 24
+                    y = (j * 30) + 32 - offset
+                    @grid_positions[[i, j]] = Tile.new([i, j], [x, y, 32, 32, "sprites/hex_outline.png"])
+                end
+        
+                if offset == 32 / 2
+                    offset = 0
+                else
+                    offset = 32 / 2
+                end
             end
-    
-            if offset == 32 / 2
-                offset = 0
-            else
-                offset = 32 / 2
-            end
+
+            @set_up ||= true;
         end
     end
 
@@ -93,22 +102,56 @@ class HexGrid
     def getHex i, j
         return @grid_positions[[i, j]].getSprite
     end
+
+
+    def getGrid
+        return @grid_positions
+    end
 end
 
 
 class Continet
-    @root
+    @root_tile
+    @tiles
+    @width
+    @size
+
+    def initialize root, grid
+        rng = Random.new
+
+        @root_tile = root
+        @tiles = Hash.new
+
+        root.path = "sprites/hex_grass.png"
+        cur = root
+
+        for i in 0..3 do
+            roll = rng.rand(6)
+
+            case roll
+            when 0
+                grid[[cur.x - 1, cur.y + 1]].sprite.path = root.path
+            when 1
+                grid[[cur.x, cur.y + 1]].sprite.path = root.path
+            when 2
+                grid[[cur.x + 1, cur.y + 1]].sprite.path = root.path
+            end
+        end
+    end
 end
 
-
-# Global functions
-
-
+$rng = Random.new
+root_x = $rng.rand(52)
+root_y = $rng.rand(21)
 $grid = HexGrid.new
+$continet
 
 def tick args
     $grid.args = args
     $grid.setUpGrid
+    root_x ||= $rng.rand(52)
+    root_y ||= $rng.rand(21)
+    #$continet ||= Continet.new($grid.getHex(root_x, root_y), $grid.getGrid)
 
     $grid.draw
     $grid.input
