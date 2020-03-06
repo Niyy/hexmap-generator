@@ -127,12 +127,12 @@ class Continet
     def landCreation grid, grid_x, grid_y, queue
         rng = Random.new
 
-        # if(rng.rand(1) < 0.8)
-        #     grid[[grid_x, grid_y]].getSprite.path = "sprites/circle-black.png"
+        if(rng.rand(1) < 0.8)
+            grid[[grid_x, grid_y]].getSprite.path = "sprites/circle-black.png"
 
-        #     added_land = [grid_x, grid_y]
-        #     queue.push(added_land)
-        # end
+            added_land = [grid_x, grid_y]
+            queue.push(added_land)
+        end
     end
 
     def continetCreator grid
