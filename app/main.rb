@@ -2,7 +2,7 @@
 
 
 class Tile
-    attr_accessor :position
+    attr_accessor :position, :tiled
     attr_gtk
 
     @sprite
@@ -115,30 +115,39 @@ class Continet
     @tiles
     @width
     @size
+    @current_size
     @created
+    @rng
 
     def initialize root, grid
         @root_tile = root
         @tiles = Hash.new
-        @size = 6
+        @rng = Random.new
+        @size = 25
+        @current_size = 0
         @created = false;
     end
 
     def landCreation grid, grid_x, grid_y, queue
-        rng = Random.new
+        if(grid_x >= 0 && grid_x < 53 && grid_y >= 0 && grid_y < 22)
+            real = @rng.rand(100)
 
-        if(rng.rand(1) < 0.8)
-            grid[[grid_x, grid_y]].getSprite.path = "sprites/circle-black.png"
+            if(real < 40 && !grid[[grid_x, grid_y]].tiled)
+                    grid[[grid_x, grid_y]].getSprite.path = "sprites/hex_grass.png"
 
-            added_land = [grid_x, grid_y]
-            queue.push(added_land)
+                    queue.push(grid[[grid_x, grid_y]])
+                    @current_size += 1
+            end
+
+            puts "random #{real}"
         end
     end
 
-    def continetCreator grid
+    def continentCreator grid
         queue = Array.new
 
         @root_tile.getSprite.path = "sprites/hex_grass.png"
+        @root_tile.tiled = true
         queue.push(@root_tile)
         tile_offset = 0
 
@@ -153,11 +162,15 @@ class Continet
             end
             
             landCreation(grid, (cur.position[0] - 1), (cur.position[1] + 1 - tile_offset), queue)
-            # landCreation(grid, cur.position[0], cur.position[1] + 1, queue)
-            # landCreation(grid, cur.position[0] + 1, cur.position[1] + 1 - tile_offset, queue)
-            # landCreation(grid, cur.position[0] - 1, cur.position[1] - tile_offset, queue)
-            # landCreation(grid, cur.position[0], cur.position[1] - 1, queue)
-            # landCreation(grid, cur.position[0] + 1, cur.position[1] - tile_offset, queue)
+            landCreation(grid, cur.position[0], cur.position[1] + 1, queue)
+            landCreation(grid, cur.position[0] + 1, cur.position[1] + 1 - tile_offset, queue)
+            landCreation(grid, cur.position[0] - 1, cur.position[1] - tile_offset, queue)
+            landCreation(grid, cur.position[0], cur.position[1] - 1, queue)
+            landCreation(grid, cur.position[0] + 1, cur.position[1] - tile_offset, queue)
+
+            if(@current_size > @size)
+                queue.clear()
+            end
         end
 
         @created = true;
@@ -172,7 +185,8 @@ end
 
 $rng = Random.new
 $grid = HexGrid.new
-$continet
+$continetOne
+$continentTwo
 
 def tick args
     $grid.args = args   
@@ -180,10 +194,19 @@ def tick args
     root_x ||= $rng.rand(52)
     root_y ||= $rng.rand(21)
 
-    $continet ||= Continet.new($grid.getHex(4, 4), $grid.getGrid)
+    $continetOne ||= Continet.new($grid.getHex(root_x, root_y), $grid.getGrid)
 
-    if(!$continet.getCreated)
-        $continet.continetCreator $grid.getGrid
+    if(!$continetOne.getCreated)
+        $continetOne.continentCreator $grid.getGrid
+
+        root_x = $rng.rand(52)
+    root_y = $rng.rand(21)
+    end
+
+    $continetTwo ||= Continet.new($grid.getHex(root_x, root_y), $grid.getGrid)
+    if(!$continetTwo.getCreated)
+        $continetTwo.continentCreator $grid.getGrid
+
     end
 
     $grid.draw
