@@ -9,21 +9,6 @@ class Tile
         @position = i_position
         @sprite = i_sprite
     end
-
-
-    def getSprite
-        return @sprite
-    end
-
-
-    def getPosition
-        return @position
-    end
-
-
-    def getDimensions
-        return [@sprite.w, @sprite.h]
-    end
 end
 
 
@@ -63,7 +48,7 @@ class HexGrid
     def draw
         for i in 0..52 do
             for j in 0..21 do
-                outputs.sprites << @grid_positions[[i, j]].getSprite
+                outputs.sprites << @grid_positions[[i, j]].sprite
             end
         end
         outputs.sprites << state.current_mouse_pos
@@ -82,26 +67,15 @@ class HexGrid
                 odd_column = true
             end
 
-            mouse_position = @grid_positions[[x, y]].getSprite
+            mouse_position = @grid_positions[[x, y]].sprite
 
             if mouse_position.y > inputs.mouse.click.y && !odd_column
                  y = y - 1
-                 mouse_position = @grid_positions[[x, y]].getSprite
-                 puts "Does this shoot"
+                 mouse_position = @grid_positions[[x, y]].sprite
              end
 
             state.current_mouse_pos = [mouse_position.x, mouse_position.y, mouse_position.w, mouse_position.h, "sprites/circle-orange.png"]
         end
-    end
-
-
-    def getHex i, j
-        return @grid_positions[[i, j]]
-    end
-
-
-    def getGrid
-        return @grid_positions
     end
 end
 
@@ -136,10 +110,9 @@ class Continet
 
             rand_num = @rng.rand(@size)
             dist = (Math.sqrt( (@root_tile.position[0] - grid_x)**2 + (@root_tile.position.y - grid_y)**2) * (@size / 10))
-            puts "dist #{dist}"
 
             if(rand_num > dist && !grid[[grid_x, grid_y]].tiled)
-                grid[[grid_x, grid_y]].getSprite.path = "sprites/hex_grass.png"
+                grid[[grid_x, grid_y]].sprite.path = "sprites/hex_grass.png"
                 @tiles[[grid_x, grid_y]] = grid[[grid_x, grid_y]]
 
                 queue.push(grid[[grid_x, grid_y]])
@@ -151,7 +124,7 @@ class Continet
         #queue = Array.new
         dist = 0;
 
-        @root_tile.getSprite.path = "sprites/circle-black.png"
+        @root_tile.sprite.path = "sprites/circle-black.png"
         @root_tile.tiled = true
         #queue.push(@root_tile)
         @tile_queue.push(@root_tile)
@@ -198,7 +171,7 @@ def tick args
     root_x ||= $rng.rand(52)
     root_y ||= $rng.rand(21)
 
-    $continentOne ||= Continet.new($grid.grid_positions[[root_x, root_y]], $rng, $grid.getGrid)
+    $continentOne ||= Continet.new($grid.grid_positions[[root_x, root_y]], $rng, $grid.grid_positions)
 
     if(!$continentOne.initialized)
         $continentOne.createContinent
@@ -213,7 +186,7 @@ def tick args
     end
 
 
-    $continentTwo ||= Continet.new($grid.getHex(root_x, root_y), $rng, $grid.getGrid)
+    $continentTwo ||= Continet.new($grid.grid_positions[[root_x, root_y]], $rng, $grid.grid_positions)
 
     if(!$continentTwo.initialized)
         root_x = $rng.rand(52)
