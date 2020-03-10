@@ -107,13 +107,16 @@ end
 
 
 class Continet
+    attr_accessor :tile_queue, :initialized, :created
+
     @root_tile
     @tiles
     @width
     @size
     @current_size
-    @created
     @rng
+    @finished
+    @tile_offset
 
     def initialize root, rng_gen, grid
         @root_tile = root
@@ -121,10 +124,13 @@ class Continet
         @rng = rng_gen
         @size = 100
         @current_size = 0
-        @created = false;
+        @tile_offset = 0
+        @created = false
+        @initialized = false
+        @tile_queue = Array.new
     end
 
-    def landCreation grid, grid_x, grid_y, queue
+    def spawnTile grid, grid_x, grid_y, queue
 
         if(grid_x >= 0 && grid_x < 53 && grid_y >= 0 && grid_y < 22)
 
@@ -141,54 +147,49 @@ class Continet
         end
     end
 
-    def continentCreator grid
-        queue = Array.new
+    def createContinent
+        #queue = Array.new
         dist = 0;
 
-        @root_tile.getSprite.path = "sprites/circle-yellow.png"
+        @root_tile.getSprite.path = "sprites/circle-black.png"
         @root_tile.tiled = true
-        queue.push(@root_tile)
-        tile_offset = 0
+        #queue.push(@root_tile)
+        @tile_queue.push(@root_tile)
 
+        @initialized = true
+    end
 
-        while !queue.empty?
+    def addLand grid
+        if !@tile_queue.empty?
 
-            cur = queue.shift
+            cur = @tile_queue.shift
             @current_size += 1
 
             if (cur.position[0] % 2) == 0
-                tile_offset = 1
+                @tile_offset = 1
             else
-                tile_offset = 0
+                @tile_offset = 0
             end
             
-            landCreation(grid, (cur.position[0] - 1), (cur.position[1] + 1 - tile_offset), queue)
-            landCreation(grid, cur.position[0], cur.position[1] + 1,  queue)
-            landCreation(grid, cur.position[0] + 1, cur.position[1] + 1 - tile_offset, queue)
-            landCreation(grid, cur.position[0] - 1, cur.position[1] - tile_offset,  queue)
-            landCreation(grid, cur.position[0], cur.position[1] - 1,  queue)
-            landCreation(grid, cur.position[0] + 1, cur.position[1] - tile_offset, queue)
+            spawnTile(grid, (cur.position[0] - 1), (cur.position[1] + 1 - @tile_offset), @tile_queue)
+            spawnTile(grid, cur.position[0], cur.position[1] + 1,  @tile_queue)
+            spawnTile(grid, cur.position[0] + 1, cur.position[1] + 1 - @tile_offset, @tile_queue)
+            spawnTile(grid, cur.position[0] - 1, cur.position[1] - @tile_offset,  @tile_queue)
+            spawnTile(grid, cur.position[0], cur.position[1] - 1,  @tile_queue)
+            spawnTile(grid, cur.position[0] + 1, cur.position[1] - @tile_offset, @tile_queue)
 
             if(@current_size >= @size)
-                queue.clear()
+                @tile_queue.clear()
+                @created = true;
             end
         end
-
-        puts "------------------------------>"
-
-        @created = true;
     end
-
-    def getCreated
-        return @created
-    end
-
 end
 
 
 $rng = Random.new
 $grid = HexGrid.new
-$continetOne
+$continentOne
 $continentTwo
 
 def tick args
@@ -197,19 +198,30 @@ def tick args
     root_x ||= $rng.rand(52)
     root_y ||= $rng.rand(21)
 
-    $continetOne ||= Continet.new($grid.grid_positions[[root_x, root_y]], $rng, $grid.getGrid)
+    $continentOne ||= Continet.new($grid.grid_positions[[root_x, root_y]], $rng, $grid.getGrid)
 
-    if(!$continetOne.getCreated)
-        $continetOne.continentCreator $grid.getGrid
+    if(!$continentOne.initialized)
+        $continentOne.createContinent
 
         root_x = $rng.rand(52)
         root_y = $rng.rand(21)
+
+        puts "Did continentOne creation"
+    end
+    if(!$continentOne.created)
+        $continentOne.addLand $grid.grid_positions
     end
 
-    $continetTwo ||= Continet.new($grid.getHex(root_x, root_y), $rng, $grid.getGrid)
-    if(!$continetTwo.getCreated)
-        $continetTwo.continentCreator $grid.getGrid
 
+    $continentTwo ||= Continet.new($grid.getHex(root_x, root_y), $rng, $grid.getGrid)
+
+    if(!$continentTwo.initialized)
+        root_x = $rng.rand(52)
+        root_y = $rng.rand(21)
+
+        $continentTwo.createContinent
+    elsif(!$continentTwo.created)
+        $continentTwo.addLand $grid.grid_positions
     end
 
     $grid.draw
