@@ -1,13 +1,15 @@
 # 1280x720
 
-
+# Age - 0 is the oldest parts of the continent. The greater the age the younder it is
+# Level - Negative values are bellow sea level, positive values are above sea level, and zero is beaches
 class Tile
-    attr_accessor :position, :tiled, :sprite
+    attr_accessor :position, :tiled, :sprite, :neighbor_count, :age, :level
     attr_gtk
 
     def initialize i_position, i_sprite
         @position = i_position
         @sprite = i_sprite
+        @tiled = false
     end
 end
 
@@ -106,29 +108,38 @@ class Continent
         @tile_queue = Array.new
     end
 
-    def spawnTile grid, grid_x, grid_y, queue, current
+    def spawnTile grid, grid_x, grid_y, queue, current_root, current_tile
 
         if(grid_x >= 0 && grid_x < 53 && grid_y >= 0 && grid_y < 22)
 
-            rand_num = @rng.rand(@size)
-            dist = (Math.sqrt( (current.position[0] - grid_x)**2 + (current.position.y - grid_y)**2) * (@size / 5))
+            if(!grid[[grid_x, grid_y]].tiled)
+                rand_num = @rng.rand(@size)
+                dist = (Math.sqrt((current_root.position.x - grid_x)**2 + (current_root.position.y - grid_y)**2) * 10)
+                puts "#{rand_num} > #{dist}"
 
-            if(rand_num > dist && !grid[[grid_x, grid_y]].tiled)
-                grid[[grid_x, grid_y]].sprite.path = "sprites/hex_grass.png"
-                @tiles[[grid_x, grid_y]] = grid[[grid_x, grid_y]]
+                if(rand_num > dist)
+                    puts "random: ", rand(-2.0..2.0)
 
-                queue.push(grid[[grid_x, grid_y]])
+                    grid[[grid_x, grid_y]].sprite.path = "sprites/hex_grass.png"
+                    grid[[grid_x, grid_y]].age = @current_size
+                    #grid[[grid_x, grid_y]].level = @rng.rand(-2..2)
+                    @tiles[[grid_x, grid_y]] = grid[[grid_x, grid_y]]
+
+                    queue.push(grid[[grid_x, grid_y]])
+                end
+            elsif(grid[[grid_x, grid_y]].tiled)
+                
             end
         end
     end
 
     def createContinent
-        #queue = Array.new
         dist = 0;
 
         @root_tile.sprite.path = "sprites/circle-black.png"
+        @root_tile.age = 0
+        @root_tile.level = @rng.rand(5)
         @root_tile.tiled = true
-        #queue.push(@root_tile)
         @tile_queue.push(@root_tile)
 
         @initialized = true
@@ -147,12 +158,12 @@ class Continent
                 @tile_offset = 0
             end
             
-            spawnTile(grid, (current_tile.position[0] - 1), (current_tile.position[1] + 1 - @tile_offset), @tile_queue, current_root)
-            spawnTile(grid, current_tile.position[0], current_tile.position[1] + 1,  @tile_queue, current_root)
-            spawnTile(grid, current_tile.position[0] + 1, current_tile.position[1] + 1 - @tile_offset, @tile_queue, current_root)
-            spawnTile(grid, current_tile.position[0] - 1, current_tile.position[1] - @tile_offset,  @tile_queue, current_root)
-            spawnTile(grid, current_tile.position[0], current_tile.position[1] - 1,  @tile_queue, current_root)
-            spawnTile(grid, current_tile.position[0] + 1, current_tile.position[1] - @tile_offset, @tile_queue, current_root)
+            spawnTile(grid, (current_tile.position[0] - 1), (current_tile.position[1] + 1 - @tile_offset), @tile_queue, current_root, current_tile)
+            spawnTile(grid, current_tile.position[0], current_tile.position[1] + 1,  @tile_queue, current_root, current_tile)
+            spawnTile(grid, current_tile.position[0] + 1, current_tile.position[1] + 1 - @tile_offset, @tile_queue, current_root, current_tile)
+            spawnTile(grid, current_tile.position[0] - 1, current_tile.position[1] - @tile_offset,  @tile_queue, current_root, current_tile)
+            spawnTile(grid, current_tile.position[0], current_tile.position[1] - 1,  @tile_queue, current_root, current_tile)
+            spawnTile(grid, current_tile.position[0] + 1, current_tile.position[1] - @tile_offset, @tile_queue, current_root, current_tile)
 
             if(@current_size >= @size)
                 @tile_queue.clear()
@@ -164,7 +175,7 @@ class Continent
     def checkForOffShoot current_tile, current_root
         rand_num = @rng.rand(100)
 
-        if(rand_num >= 0.90)
+        if(rand_num >= 10)
             current_root.sprite.path = "sprites/hex_grass.png"
             current_root = current_tile
             current_tile.sprite.path = "sprites/circle-blue.png"
@@ -195,11 +206,9 @@ def tick args
     end
 
     for i in 0..4 do
-        puts "huhuh"
         if(!$continents[i].created)
             $continents[i].addLand $grid.grid_positions
         end
-        puts "haha"
     end
 
     $grid.draw
