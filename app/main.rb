@@ -110,26 +110,49 @@ class Continent
 
     def spawnTile grid, grid_x, grid_y, queue, current_root, current_tile
 
-        if(grid_x >= 0 && grid_x < 53 && grid_y >= 0 && grid_y < 22)
+        if(grid_x < 0)
+            grid_x = 52 + grid_x
+        elsif(grid_x >= 53)
+            grid_x = grid_x - 52
+        end
 
-            if(!grid[[grid_x, grid_y]].tiled)
-                rand_num = @rng.rand(@size)
-                dist = (Math.sqrt((current_root.position.x - grid_x)**2 + (current_root.position.y - grid_y)**2) * 10)
-                puts "#{rand_num} > #{dist}"
+        if(grid_y < 0)
+            grid_y = 21 + grid_y
+        elsif(grid_y >= 22)
+            grid_y = grid_y - 21
+        end
 
-                if(rand_num > dist)
-                    puts "random: ", rand(-2.0..2.0)
+        if(!grid[[grid_x, grid_y]].tiled)
+            rand_num = rand(@size)
+            dist = (@size / Math.sqrt((current_root.position.x - grid_x)**2 + (current_root.position.y - grid_y)**2))
+            puts "#{rand_num} > #{dist}"
 
-                    grid[[grid_x, grid_y]].sprite.path = "sprites/hex_grass.png"
-                    grid[[grid_x, grid_y]].age = @current_size
-                    #grid[[grid_x, grid_y]].level = @rng.rand(-2..2)
-                    @tiles[[grid_x, grid_y]] = grid[[grid_x, grid_y]]
+            if(rand_num > dist)
 
-                    queue.push(grid[[grid_x, grid_y]])
+                level_addition = rand(5)
+                case(level_addition)
+                when 0
+                    level_addition = -2
+                when 1
+                    level_addition = -1
+                when 2
+                    level_addition = 0
+                when 3
+                    level_addition = 1
+                when 4
+                    level_addition = 2
                 end
-            elsif(grid[[grid_x, grid_y]].tiled)
-                
+
+
+                grid[[grid_x, grid_y]].sprite.path = "sprites/hex_grass.png"
+                grid[[grid_x, grid_y]].age = @current_size
+                grid[[grid_x, grid_y]].level = current_tile.level + level_addition 
+                @tiles[[grid_x, grid_y]] = grid[[grid_x, grid_y]]
+
+                queue.push(grid[[grid_x, grid_y]])
             end
+        elsif(grid[[grid_x, grid_y]].tiled)
+            
         end
     end
 
@@ -175,7 +198,7 @@ class Continent
     def checkForOffShoot current_tile, current_root
         rand_num = @rng.rand(100)
 
-        if(rand_num >= 10)
+        if(rand_num >= 95)
             current_root.sprite.path = "sprites/hex_grass.png"
             current_root = current_tile
             current_tile.sprite.path = "sprites/circle-blue.png"
