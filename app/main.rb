@@ -121,7 +121,17 @@ class Continent
 
     def spawnTile grid, grid_x, grid_y, queue, current_root, current_tile
 
-        if(grid_x >= 0 && grid_x < 53 && grid_y >= 0 && grid_y < 22)
+        if(grid_x < 0)
+            grid_x = 52 + grid_x
+        elsif(grid_x >= 53)
+            grid_x = grid_x - 52
+        end
+
+        if(grid_y < 0)
+            grid_y = 21 + grid_y
+        elsif(grid_y >= 22)
+            grid_y = grid_y - 21
+        end
 
             if(!grid[[grid_x, grid_y]].tiled)
                 rand_num = @rng.rand(@consintration)
@@ -152,6 +162,8 @@ class Continent
             else
                 current_tile.neighbor << grid[[grid_x, grid_y]]
             end
+        elsif(grid[[grid_x, grid_y]].tiled)
+            
         end
     end
 
