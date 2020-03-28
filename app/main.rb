@@ -3,13 +3,21 @@
 # Age - 0 is the oldest parts of the continent. The greater the age the younder it is
 # Level - Negative values are bellow sea level, positive values are above sea level, and zero is beaches
 class Tile
-    attr_accessor :position, :tiled, :sprite, :neighbor_count, :age, :level
+    attr_accessor :position, :tiled, :sprite, :neighbor, :age, :level
     attr_gtk
 
     def initialize i_position, i_sprite
         @position = i_position
         @sprite = i_sprite
+        @neighbor = Array.new
         @tiled = false
+    end
+
+    def reinitialize sprite, age, level, tiled
+        @sprite.path = sprite
+        @age = age
+        @level = level
+        @tiled = tiled
     end
 end
 
@@ -50,9 +58,12 @@ class HexGrid
     def draw
         for i in 0..52 do
             for j in 0..21 do
-                outputs.sprites << @grid_positions[[i, j]].sprite
+                tiling =  @grid_positions[[i, j]]
+                outputs.sprites << tiling.sprite
+                outputs.labels << [tiling.sprite.x + 2, tiling.sprite.y + 17, "#{tiling.level}, #{tiling.age}", -6]
             end
         end
+
         outputs.sprites << state.current_mouse_pos
     end
 
@@ -83,7 +94,7 @@ end
 
 
 class Continent
-    attr_accessor :tile_queue, :initialized, :created, :long_adder, :wide_adder
+    attr_accessor :tile_queue, :initialized, :created, :consintration, :wide_adder
 
     @root_tile
     @tiles
@@ -101,7 +112,7 @@ class Continent
         @size = 50
         @current_size = 0
         @tile_offset = 0
-        @long_adder = 0
+        @consintration = 4
         @wide_adder = 0
         @created = false
         @initialized = false
@@ -113,22 +124,33 @@ class Continent
         if(grid_x >= 0 && grid_x < 53 && grid_y >= 0 && grid_y < 22)
 
             if(!grid[[grid_x, grid_y]].tiled)
-                rand_num = @rng.rand(@size)
-                dist = (Math.sqrt((current_root.position.x - grid_x)**2 + (current_root.position.y - grid_y)**2) * 10)
+                rand_num = @rng.rand(@consintration)
+                dist = (Math.sqrt((current_root.position.x - grid_x)**2 + (current_root.position.y - grid_y)**2))
                 puts "#{rand_num} > #{dist}"
 
                 if(rand_num > dist)
-                    puts "random: ", rand(-2.0..2.0)
+                    translater = rand(3)
 
-                    grid[[grid_x, grid_y]].sprite.path = "sprites/hex_grass.png"
-                    grid[[grid_x, grid_y]].age = @current_size
-                    #grid[[grid_x, grid_y]].level = @rng.rand(-2..2)
+                    case(translater)
+                    when 0 then level = -1
+                    when 1 then level = 0
+                    when 2 then level = 1
+                    end
+                    
+                    grid[[grid_x, grid_y]].reinitialize "sprites/hex_grass.png", @current_size, (current_tile.level + level), true
+                    current_tile.neighbor << grid[[grid_x, grid_y]]
                     @tiles[[grid_x, grid_y]] = grid[[grid_x, grid_y]]
+
+                    if(grid[[grid_x, grid_y]].level < -2)
+                        grid[[grid_x, grid_y]].level = -2
+                    elsif(grid[[grid_x, grid_y]].level > 2)
+                        grid[[grid_x, grid_y]].level = 2
+                    end
 
                     queue.push(grid[[grid_x, grid_y]])
                 end
-            elsif(grid[[grid_x, grid_y]].tiled)
-                
+            else
+                current_tile.neighbor << grid[[grid_x, grid_y]]
             end
         end
     end
@@ -146,8 +168,9 @@ class Continent
     end
 
     def addLand grid
+        current_root ||= @root_tile
+
         if !@tile_queue.empty?
-            current_root ||= @root_tile
             current_tile = @tile_queue.shift
             checkForOffShoot current_tile, current_root
             @current_size += 1
@@ -175,12 +198,14 @@ class Continent
     def checkForOffShoot current_tile, current_root
         rand_num = @rng.rand(100)
 
-        if(rand_num >= 10)
+        if(rand_num <= 40)
             current_root.sprite.path = "sprites/hex_grass.png"
             current_root = current_tile
-            current_tile.sprite.path = "sprites/circle-blue.png"
-            puts "Changed root too #{current_root.position}"
+            current_root.sprite.path = "sprites/circle-blue.png"
         end
+    end
+
+    def fallIntoTheSea
     end
 end
 
@@ -211,6 +236,6 @@ def tick args
         end
     end
 
-    $grid.draw
     $grid.input
+    $grid.draw
 end
