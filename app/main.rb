@@ -1,11 +1,12 @@
 # 1280x720
 require 'app/hex-grid.rb'
 require 'app/continent.rb'
-
+``
 
 $rng = Random.new
 $grid = HexGrid.new
 $continents
+$size = 0
 
 def tick args
     $grid.args = args   
@@ -28,6 +29,30 @@ def tick args
             $continents[i].addLand $grid.grid_positions
         end
     end
+
+    args.state.minus_box = [3, 693, 15, 25]
+    args.state.minus_lable = [5, 715, "-"]
+
+    #args.outputs.labels << [37, 715, "+"]
+
+    args.state.plus_box = [45, 693, 15, 25]
+    args.state.plus_label = [47, 715, "+"]
+    
+    if args.inputs.mouse.click
+        if (args.inputs.mouse.click.point.inside_rect? args.state.plus_box)
+            $size += 1
+        elsif (args.inputs.mouse.click.point.inside_rect? args.state.minus_box)
+            $size -= 1
+        end
+    end
+
+    args.state.size_label = [27, 715, "#{$size}"]
+
+    args.outputs.borders << args.state.minus_box
+    args.outputs.borders << args.state.plus_box
+    args.outputs.labels << args.state.minus_lable
+    args.outputs.labels << args.state.plus_label
+    args.outputs.labels << args.state.size_label
 
     $grid.input
     $grid.draw
