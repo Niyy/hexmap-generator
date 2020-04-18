@@ -41,7 +41,7 @@ class HexGrid
                 outputs.labels << [tiling.sprite.x + 2, tiling.sprite.y + 17, "#{52 - i},#{21 - j}", -6]
             end
         end
-
+        
         outputs.sprites << state.current_mouse_pos
     end
 
