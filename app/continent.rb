@@ -133,7 +133,7 @@ class Continent
         if(rand_num <= 40)
             current_root.sprite.path = "sprites/hex_grass.png"
             current_root = current_tile
-            current_root.sprite.path = "sprites/circle-blue.png"
+            #current_root.sprite.path = "sprites/circle-blue.png"
         end
     end
 
@@ -156,7 +156,7 @@ class Continent
                         choice = @rng.rand(10)
 
                         if(choice >= 2)
-                            value[tile_to_release].sprite.path = "sprites/circle-violet.png"
+                            value[tile_to_release].sprite.path = "sprites/hex_water.png"
                         end
                     end
                 end

@@ -46,6 +46,10 @@ class HexGrid
     end
 
 
+    def clearGrid
+        
+
+
     def input
         if inputs.mouse.click
             odd_column = false
