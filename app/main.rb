@@ -5,7 +5,9 @@ require 'app/continent.rb'
 $rng = Random.new
 $grid = HexGrid.new
 $continents
-$size = 0
+$size = 100
+$consintration = 7
+
 
 def tick args
     $grid.args ||= args   
@@ -18,7 +20,8 @@ def tick args
             root_x = $rng.rand(52)
             root_y = $rng.rand(21)
 
-            $continents.push Continent.new($grid.grid_positions[[root_x, root_y]], $rng, $grid.grid_positions)
+            $continents.push Continent.new($grid.grid_positions[[root_x, root_y]], $rng, $grid.grid_positions,
+                                            $size, $consintration)
             $continents.last.createContinent
         end
     end
@@ -31,11 +34,11 @@ def tick args
 
     
 
-    # args.state.minus_box = [3, 693, 15, 25]
-    # args.state.minus_lable = [5, 715, "-"]
+    # args.state.minus_box = [80, 693, 15, 25]
+    # args.state.minus_lable = [82, 715, "-"]
 
-    # args.state.plus_box = [45, 693, 15, 25]
-    # args.state.plus_label = [47, 715, "+"]
+    # args.state.plus_box = [125, 693, 15, 25]
+    # args.state.plus_label = [129, 715, "+"]
     
     # if args.inputs.mouse.click
     #     if (args.inputs.mouse.click.point.inside_rect? args.state.plus_box)
@@ -45,13 +48,8 @@ def tick args
     #     end
     # end
 
-    # args.state.size_label = [27, 715, "#{$size}"]
-
-    # args.outputs.borders << args.state.minus_box
-    # args.outputs.borders << args.state.plus_box
-    # args.outputs.labels << args.state.minus_lable
-    # args.outputs.labels << args.state.plus_label
-    # args.outputs.labels << args.state.size_label
+    # args.state.size_label = [95, 715, "#{$size}"]
+    adjustable_integer args, "size", 80, $size
 
     args.state.reset = [3, 693, 20, 25]
     args.state.reset_label = [25, 715, "Reset"]
@@ -65,6 +63,29 @@ def tick args
     if args.inputs.mouse.click
         if args.inputs.mouse.click.point.inside_rect? args.state.reset
             $continents = nil
+            $grid.clearGrid
         end
     end
+end
+
+
+def adjustable_integer args, ui_name, position, changeable_variable
+    box_one = [position, 693, 15, 25]
+    box_two = [position + 45, 693, 15, 25]
+    
+    args.outputs.borders << [position, 693, 15, 25]
+    args.outputs.labels << [position + 2, 715, "-"]
+
+    args.outputs.borders << [position + 45, 693, 15, 25]
+    args.outputs.labels << [position + 47, 715, "+"]
+    
+    # if args.inputs.mouse.click
+    #     if (args.inputs.mouse.click.point.inside_rect? box_holder["first-box"])
+    #         changeable_variable += 1
+    #     elsif (args.inputs.mouse.click.point.inside_rect? box_holder["second-box"])
+    #         changeable_variable -= 1
+    #     end
+    # end
+
+    args.outputs.labels << [position + 15, 715, "#{changeable_variable}"]
 end

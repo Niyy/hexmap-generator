@@ -34,42 +34,48 @@ class HexGrid
 
 
     def draw
-        for i in 0..52 do
-            for j in 0..21 do
-                tiling =  @grid_positions[[52 - i, 21 - j]]
-                outputs.sprites << tiling.sprite
-                outputs.labels << [tiling.sprite.x + 2, tiling.sprite.y + 17, "#{52 - i},#{21 - j}", -6]
+        if(!@grid_positions.nil?)
+            for i in 0..52 do
+                for j in 0..21 do
+                    tiling =  @grid_positions[[52 - i, 21 - j]]
+                    outputs.sprites << tiling.sprite
+                    outputs.labels << [tiling.sprite.x + 2, tiling.sprite.y + 17, "#{52 - i},#{21 - j}", -6]
+                end
             end
+            
+            outputs.sprites << state.current_mouse_pos
         end
-        
-        outputs.sprites << state.current_mouse_pos
     end
 
 
     def clearGrid
+        @grid_positions = nil
+    end
         
 
 
     def input
-        if inputs.mouse.click
-            odd_column = false
+        if(!@grid_positions.nil?)
+            if inputs.mouse.click
+                odd_column = false
 
-            x = ((inputs.mouse.click.x.floor() / 24)).floor()
-            y = (inputs.mouse.click.y.floor() / 30).floor()
+                x = ((inputs.mouse.click.x.floor() / 24)).floor()
+                y = (inputs.mouse.click.y.floor() / 30).floor()
 
-            if x % 2 > 0
-                y = y - 1
-                odd_column = true
+                if x % 2 > 0
+                    y = y - 1
+                    odd_column = true
+                end
+
+                mouse_position = @grid_positions[[x, y]].sprite
+
+                if mouse_position.y > inputs.mouse.click.y && !odd_column
+                    y = y - 1
+                    mouse_position = @grid_positions[[x, y]].sprite
+                end
+
+                state.current_mouse_pos = [mouse_position.x, mouse_position.y, mouse_position.w, mouse_position.h, "sprites/circle-orange.png"]
             end
-
-            mouse_position = @grid_positions[[x, y]].sprite
-
-            if mouse_position.y > inputs.mouse.click.y && !odd_column
-                 y = y - 1
-                 mouse_position = @grid_positions[[x, y]].sprite
-            end
-
-            state.current_mouse_pos = [mouse_position.x, mouse_position.y, mouse_position.w, mouse_position.h, "sprites/circle-orange.png"]
         end
     end
 end

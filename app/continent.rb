@@ -1,22 +1,21 @@
 require 'app/tile.rb'
 
 class Continent
-    attr_accessor :tile_queue, :initialized, :created, :consintration, :wide_adder
+    attr_accessor :tile_queue, :initialized, :size, :created, :consintration, :wide_adder
 
     @root_tile
     @tiles
     @width
-    @size
     @current_size
     @rng
     @finished
 
 
-    def initialize root, rng_gen, grid
+    def initialize root, rng_gen, grid, i_size, i_consintration
         @root_tile = root
         @tiles = Hash.new
         @rng = rng_gen
-        @size = 100
+        @size = i_size
         @current_size = 0
         @consintration = 4
         @wide_adder = 0
