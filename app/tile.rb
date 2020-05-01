@@ -67,4 +67,17 @@ class Tile
 
         return [position[0] - 1, position[1] + 1 - tile_offset]
     end
+
+    def serialize
+        { position: position, tiled: tiled, sprite: sprite, top_sprite: top_sprite, 
+            neighbor: neighbor, age: age, level: level, tile_offset: tile_offset }
+    end
+
+    def inspect
+        serialize.to_s
+    end
+
+    def to_s
+        serialize.to_s
+    end
 end

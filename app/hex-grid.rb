@@ -3,7 +3,7 @@ require 'app/tile.rb'
 # Grid will hold data on all the tiles in the realm.
 # This will be used for a reference for contentents.
 class HexGrid
-    attr_accessor :grid_positions
+    attr_accessor :grid_positions, :width, :height
     attr_gtk
 
     @set_up
@@ -11,6 +11,8 @@ class HexGrid
     def setUpGrid
 
         if @grid_positions.nil?
+            @width ||= 32
+            @height ||= 30
             @grid_positions ||= Hash.new
             offset = 32 / 2
 
@@ -18,7 +20,7 @@ class HexGrid
                 for j in 0..21 do
                     x = i * 24
                     y = (j * 30) + 32 - offset
-                    @grid_positions[[i, j]] = Tile.new([i, j], [x, y, 32, 30, "sprites/hex_water.png"])
+                    @grid_positions[[i, j]] = Tile.new([i, j], [x, y, @width, @height, "sprites/hex_water.png"])
                 end
         
                 if offset == 32 / 2
@@ -74,8 +76,24 @@ class HexGrid
                     mouse_position = @grid_positions[[x, y]].sprite
                 end
 
-                state.current_mouse_pos = [mouse_position.x, mouse_position.y, mouse_position.w, mouse_position.h, "sprites/circle-orange.png"]
+                state.current_mouse_pos = [mouse_position.x, mouse_position.y, 
+                                            mouse_position.w, mouse_position.h, "sprites/circle-orange.png"]
             end
         end
+    end
+
+
+    def serialize
+        { grid_positions: grid_positions, width: width, height: height }
+    end
+
+
+    def inspect
+        serialize.to_s
+    end
+
+
+    def to_s
+        serialize.to_s
     end
 end

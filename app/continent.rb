@@ -2,6 +2,7 @@ require 'app/tile.rb'
 
 class Continent
     attr_accessor :tile_queue, :initialized, :size, :created, :consintration, :wide_adder
+    attr_gtk
 
     @root_tile
     @tiles
@@ -9,6 +10,7 @@ class Continent
     @current_size
     @rng
     @finished
+    @grid
 
 
     def initialize root, rng_gen, grid, i_size, i_consintration
@@ -17,11 +19,12 @@ class Continent
         @rng = rng_gen
         @size = i_size
         @current_size = 0
-        @consintration = 4
+        @consintration = i_consintration
         @wide_adder = 0
         @created = false
         @initialized = false
         @tile_queue = Array.new
+        @grid = grid
     end
 
     
@@ -156,6 +159,9 @@ class Continent
 
                         if(choice >= 2)
                             value[tile_to_release].sprite.path = "sprites/hex_water.png"
+                            outputs.sprites << [value[tile_to_release].position[0], value[tile_to_release].position[1], 
+                                                @grid.width, @grid.height, "sprites/circle-black.png"]
+                            puts value[tile_to_release].position
                         end
                     end
                 end
