@@ -120,11 +120,11 @@ class Continent
             spawnTile(grid, current_tile.lower_center,  @tile_queue, current_root, current_tile)
             spawnTile(grid, current_tile.lower_right, @tile_queue, current_root, current_tile)
 
-            # if(@current_size >= @size || @tile_queue.empty?)
-            #     @tile_queue.clear()
-            #     checkForUnpleasentTiles
-            #     @created = true;
-            # end
+            if(@current_size >= @size || @tile_queue.empty?)
+                @tile_queue.clear()
+                checkForUnpleasentTiles
+                @created = true;
+            end
         end
     end
 

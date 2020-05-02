@@ -1,7 +1,8 @@
 # Age - 0 is the oldest parts of the continent. The greater the age the younder it is
 # Level - Negative values are bellow sea level, positive values are above sea level, and zero is beaches
 class Tile
-    attr_accessor :position, :tiled, :sprite, :top_sprite, :neighbor, :age, :level, :tile_offset
+    attr_accessor   :position, :tiled, :sprite, :top_sprite, :neighbor, :age, :level, :tile_offset,
+                    :radius
     attr_gtk
 
     def initialize i_position, i_sprite
@@ -10,6 +11,7 @@ class Tile
         @neighbor = Hash.new
         @tiled = false
         @tile_offset = 0
+        @radius = i_sprite.x / 2
     end
 
     def reinitialize sprite, age, level, tiled
