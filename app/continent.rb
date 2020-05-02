@@ -17,9 +17,9 @@ class Continent
         @root_tile = root
         @tiles = Hash.new
         @rng = rng_gen
-        @size = i_size
+        @size = Number.new(i_size)
         @current_size = 0
-        @consintration = i_consintration
+        @consintration = Number.new(i_consintration)
         @wide_adder = 0
         @created = false
         @initialized = false
@@ -184,4 +184,19 @@ class Continent
         end
 
     end
+
+    
+    def serialize
+        { tile_queue: tile_queue, initialized: initialized, size: size, 
+            created: created, consintration: consintration, wide_adder: wide_adder }
+    end
+
+    def inspect
+        serialize.to_s
+    end
+
+    def to_s
+        serialize.to_s
+    end
+
 end
