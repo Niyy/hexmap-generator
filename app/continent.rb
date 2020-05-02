@@ -17,9 +17,9 @@ class Continent
         @root_tile = root
         @tiles = Hash.new
         @rng = rng_gen
-        @size = Number.new(i_size)
+        @size = i_size
         @current_size = 0
-        @consintration = Number.new(i_consintration)
+        @consintration = i_consintration
         @wide_adder = 0
         @created = false
         @initialized = false
@@ -120,11 +120,11 @@ class Continent
             spawnTile(grid, current_tile.lower_center,  @tile_queue, current_root, current_tile)
             spawnTile(grid, current_tile.lower_right, @tile_queue, current_root, current_tile)
 
-            if(@current_size >= @size || @tile_queue.empty?)
-                @tile_queue.clear()
-                checkForUnpleasentTiles
-                @created = true;
-            end
+            # if(@current_size >= @size || @tile_queue.empty?)
+            #     @tile_queue.clear()
+            #     checkForUnpleasentTiles
+            #     @created = true;
+            # end
         end
     end
 

@@ -24,7 +24,7 @@ class HexGrid
                     y = (j * 30) + 32 - offset
                     @grid_positions[[i, j]] = Tile.new([i, j], [x, y, @width, @height, "sprites/hex_water.png"])
                 end
-        
+                
                 if offset == 32 / 2
                     offset = 0
                 else

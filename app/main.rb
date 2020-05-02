@@ -4,32 +4,38 @@ require 'app/continent.rb'
 
 $rng = Random.new
 
-
 def tick args
     args.state.grid ||= HexGrid.new
-    args.state.continents ||= Array.new()
 
     args.state.grid.args ||= args   
     args.state.grid.setUpGrid
+
+    args.state.continents ||= Array.new()
     
-    args.state.global_consintration ||= 7
-    args.state.global_size ||= 100
+    #args.state.global_consintration ||= 7
+    #args.state.global_size ||= 100
+    
+    if(!args.state.continents.nil?)
+        if(args.state.continents.empty?)
+            for i in 1..5 do
+                root_x = $rng.rand(52)
+                root_y = $rng.rand(21)
 
-    if(args.state.continents.empty?)
-        for i in 1..5 do
-            root_x = $rng.rand(52)
-            root_y = $rng.rand(21)
-
-            args.state.continents.push Continent.new(args.state.grid.grid_positions[[root_x, root_y]], $rng, 
-                                                    args.state.grid.grid_positions, args.state.global_size, args.state.global_consintration)
-            args.state.continents.last.createContinent
-            args.state.continents.last.args ||= args
+                if(!args.state.global_size.nil?)
+                    args.state.continents.push Continent.new(args.state.grid.grid_positions[[root_x, root_y]], $rng, 
+                                                            args.state.grid.grid_positions, 100, 10)
+                    args.state.continents.last.createContinent
+                    args.state.continents.last.args ||= args
+                end
+            end
         end
-    end
 
-    for i in 0..4 do
-        if(!args.state.continents[i].created)
-            args.state.continents[i].addLand args.state.grid.grid_positions
+        if(!args.state.continents.nil?)
+            for i in 0..4 do
+                if(!args.state.continents[i].created)
+                    args.state.continents[i].addLand args.state.grid.grid_positions
+                end
+            end
         end
     end
 
@@ -51,8 +57,8 @@ def tick args
         end
     end
 
-    next_pos = adjustable_integer args, "size", next_pos, args.state.global_size
-    next_pos = adjustable_integer args, "consintration", next_pos, args.state.global_consintration
+    #next_pos = adjustable_integer args, "size", next_pos, args.state.global_size
+    #next_pos = adjustable_integer args, "consintration", next_pos, args.state.global_consintration
 
     args.state.grid.input
     args.state.grid.draw
