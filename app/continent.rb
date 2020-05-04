@@ -135,7 +135,7 @@ class Continent
         if(rand_num <= 40)
             current_root.sprite.path = "sprites/hex_grass.png"
             current_root = current_tile
-            #current_root.sprite.path = "sprites/circle-blue.png"
+            current_root.sprite.path = "sprites/circle-blue.png"
         end
     end
 

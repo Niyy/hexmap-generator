@@ -3,71 +3,75 @@ require 'app/hex-grid.rb'
 require 'app/continent.rb'
 
 $rng = Random.new
-$grid = HexGrid.new
-$continents = Array.new
+# $grid = HexGrid.new
+# $continents = Array.new
+
+def initialize_state
+    $gtk.args.state.reset_label = []
+    $gtk.args.state.global_consintration = 7
+    $gtk.args.state.global_size = 100
+    $gtk.args.state.grid = HexGrid.new
+    $gtk.args.state.grid.args = $gtk.args
+    $gtk.args.state.grid.setUpGrid
+    $gtk.args.state.continents = Array.new
+end
 
 def tick args
-    $grid.args ||= args
-    $grid.setUpGrid
-    #args.state.grid ||= HexGrid.new
+    initialize_state if $gtk.args.state.tick_count == 1
+    #$gtk.args.state.tick_count = 0
 
-    # args.state.grid.args ||= args   
-    # args.state.grid.setUpGrid
+    # $grid.args ||= args
+    # $grid.setUpGrid
     
-    args.state.global_consintration ||= 7
-    args.state.global_size ||= 100
 
-    if(!$continents.nil?)
+    # if(!$continents.nil?)
 
-        if($continents.empty?)
-            for i in 1..5 do
-                root_x = $rng.rand(52)
-                root_y = $rng.rand(21)
-
-                $continents.push Continent.new($grid.grid_positions[[root_x, root_y]], $rng, 
-                                                        $grid.grid_positions, 100, 10)
-                $continents.last.createContinent
-                $continents.last.args = args
-            end
-        end
-    end
-
-    if(!$continents.nil?)
-        $continents.each do |continent|
-            if(!continent&.created)
-                continent.addLand $grid.grid_positions
-            end
-        end
-    end
-    
-    # if(args.state.continents.nil?)
-    #     args.state.continents = Array.new
-
-    #     if(args.state.continents.empty?)
+    #     if($continents.empty?)
     #         for i in 1..5 do
     #             root_x = $rng.rand(52)
     #             root_y = $rng.rand(21)
 
-    #             args.state.continents.push Continent.new(args.state.grid.grid_positions[[root_x, root_y]], $rng, 
-    #                                                     args.state.grid.grid_positions, 100, 10)
-    #             args.state.continents.last.createContinent
-    #             args.state.continents.last.args = args
+    #             $continents.push Continent.new($grid.grid_positions[[root_x, root_y]], $rng, 
+    #                                                     $grid.grid_positions, 100, 10)
+    #             $continents.last.createContinent
+    #             $continents.last.args = args
     #         end
     #     end
     # end
 
-
-    # if(!args.state.continents.nil?)
-    #     args.state.continents.each do |continent|
+    # if(!$continents.nil?)
+    #     $continents.each do |continent|
     #         if(!continent&.created)
-    #             continent.addLand args.state.grid.grid_positions
+    #             continent.addLand $grid.grid_positions
     #         end
     #     end
     # end
+    
+
+    if(args.state.continents.empty?)
+        for i in 1..5 do
+            root_x = $rng.rand(52)
+            root_y = $rng.rand(21)
+
+            args.state.continents.push Continent.new(args.state.grid.grid_positions[[root_x, root_y]], $rng, 
+                                                    args.state.grid.grid_positions, 100, 10)
+            args.state.continents.last.createContinent
+            args.state.continents.last.args = args
+        end
+    end
 
 
-    args.state.reset ||= [3, 693, 20, 25]
-    args.state.reset_label ||= [25, 715, "Reset"]
+    if(!args.state.continents.empty?)
+        args.state.continents.each do |continent|
+            if(!continent&.created)
+                continent.addLand args.state.grid.grid_positions
+            end
+        end
+    end
+
+
+    args.state.reset = [3, 693, 20, 25]
+    args.state.reset_label = [25, 715, "Reset"]
     next_pos = 25 + ("Reset".length * 10)
 
     args.outputs.borders << args.state.reset
