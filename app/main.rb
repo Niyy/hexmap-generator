@@ -18,35 +18,6 @@ end
 
 def tick args
     initialize_state if $gtk.args.state.tick_count == 1
-    #$gtk.args.state.tick_count = 0
-
-    # $grid.args ||= args
-    # $grid.setUpGrid
-    
-
-    # if(!$continents.nil?)
-
-    #     if($continents.empty?)
-    #         for i in 1..5 do
-    #             root_x = $rng.rand(52)
-    #             root_y = $rng.rand(21)
-
-    #             $continents.push Continent.new($grid.grid_positions[[root_x, root_y]], $rng, 
-    #                                                     $grid.grid_positions, 100, 10)
-    #             $continents.last.createContinent
-    #             $continents.last.args = args
-    #         end
-    #     end
-    # end
-
-    # if(!$continents.nil?)
-    #     $continents.each do |continent|
-    #         if(!continent&.created)
-    #             continent.addLand $grid.grid_positions
-    #         end
-    #     end
-    # end
-    
 
     if(args.state.continents.empty?)
         for i in 1..5 do
