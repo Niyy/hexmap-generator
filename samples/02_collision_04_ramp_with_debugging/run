@@ -1,0 +1,2 @@
+#!/bin/sh
+cd "`dirname "$0"`"/../.. && exec ./dragonruby samples/02_collision_04_ramp_with_debugging

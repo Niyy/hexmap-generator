@@ -1,0 +1,2 @@
+#!/bin/sh
+cd "`dirname "$0"`"/../.. && exec ./dragonruby samples/12_controller_input_sprite_sheet_animations

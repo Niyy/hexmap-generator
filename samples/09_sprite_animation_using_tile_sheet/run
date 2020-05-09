@@ -1,0 +1,2 @@
+#!/bin/sh
+cd "`dirname "$0"`"/../.. && exec ./dragonruby samples/09_sprite_animation_using_tile_sheet

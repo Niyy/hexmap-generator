@@ -1,0 +1,2 @@
+#!/bin/sh
+cd "`dirname "$0"`"/../.. && exec ./dragonruby samples/20_roguelike_starting_point --replay replay.txt

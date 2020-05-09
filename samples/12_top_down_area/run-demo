@@ -1,0 +1,2 @@
+#!/bin/sh
+cd "`dirname "$0"`"/../.. && exec ./dragonruby samples/12_top_down_area --replay replay.txt

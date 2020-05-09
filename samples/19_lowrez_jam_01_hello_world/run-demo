@@ -1,0 +1,2 @@
+#!/bin/sh
+cd "`dirname "$0"`"/../.. && exec ./dragonruby samples/19_lowrez_jam_01_hello_world --replay replay.txt
