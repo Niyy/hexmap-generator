@@ -158,14 +158,13 @@ class Continent
                         choice = @rng.rand(10)
 
                         if(choice >= 2)
-                            value[tile_to_release].sprite.path = "sprites/hex_water.png"
-                            outputs.sprites << [value[tile_to_release].position[0], value[tile_to_release].position[1], 
-                                                @grid.width, @grid.height, "sprites/circle-black.png"]
-                            puts value[tile_to_release].position
+                            value[tile_to_release].reset
                         end
                     end
                 end
         }
+
+        puts "End Construction"
     end
 
     def findLevelSprite level, tile

@@ -2,12 +2,13 @@
 # Level - Negative values are bellow sea level, positive values are above sea level, and zero is beaches
 class Tile
     attr_accessor   :position, :tiled, :sprite, :top_sprite, :neighbor, :age, :level, :tile_offset,
-                    :radius
+                    :radius, :initial_sprite
     attr_gtk
 
     def initialize i_position, i_sprite
         @position = i_position
         @sprite = i_sprite
+        @initial_sprite = i_sprite
         @neighbor = Hash.new
         @tiled = false
         @tile_offset = 0
@@ -19,6 +20,10 @@ class Tile
         @age = age
         @level = level
         @tiled = tiled
+    end
+
+    def reset
+        @sprite = @initial_sprite
     end
 
 

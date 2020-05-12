@@ -17,7 +17,7 @@ def initialize_state
 end
 
 def tick args
-    initialize_state if $gtk.args.state.tick_count == 1
+    initialize_state if $gtk.args.state.tick_count == 0
 
     if(args.state.continents.empty?)
         for i in 1..5 do
@@ -50,16 +50,16 @@ def tick args
 
     if args.inputs.mouse.click
         if args.inputs.mouse.click.point.inside_rect? args.state.reset
-            #args.state.continents = nil
-            #args.state.grid.clearGrid
+            args.state.continents = nil
+            args.state.grid.clearGrid
         end
     end
 
-    # next_pos = adjustable_integer args, "size", next_pos, args.state.global_size
-    # next_pos = adjustable_integer args, "consintration", next_pos, args.state.global_consintration
+    next_pos = adjustable_integer args, "size", next_pos, args.state.global_size
+    next_pos = adjustable_integer args, "consintration", next_pos, args.state.global_consintration
 
-    $grid.input
-    $grid.draw
+    args.state.grid.input
+    args.state.grid.draw
 end
 
 
