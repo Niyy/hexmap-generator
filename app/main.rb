@@ -12,6 +12,7 @@ def initialize_state
     $gtk.args.state.global_size = 100
     $gtk.args.state.grid = HexGrid.new
     $gtk.args.state.grid.args = $gtk.args
+    $gtk.args.state.grid.initial_sprite = "sprites/hex_water.png"
     $gtk.args.state.grid.setUpGrid
     $gtk.args.state.continents = Array.new
 end
@@ -20,12 +21,13 @@ def tick args
     initialize_state if $gtk.args.state.tick_count == 0
 
     if(args.state.continents.empty?)
+        puts "refresh"
         for i in 1..5 do
             root_x = $rng.rand(52)
             root_y = $rng.rand(21)
 
             args.state.continents.push Continent.new(args.state.grid.grid_positions[[root_x, root_y]], $rng, 
-                                                    args.state.grid.grid_positions, 100, 10)
+                                                    args.state.grid.grid_positions, args.state.global_size, args.state.global_consintration)
             args.state.continents.last.createContinent
             args.state.continents.last.args = args
         end
@@ -50,15 +52,15 @@ def tick args
 
     if args.inputs.mouse.click
         if args.inputs.mouse.click.point.inside_rect? args.state.reset
-            args.state.continents = nil
             args.state.grid.clearGrid
+            args.state.continents.clear
         end
     end
 
-    next_pos = adjustable_integer args, "size", next_pos, args.state.global_size
-    next_pos = adjustable_integer args, "consintration", next_pos, args.state.global_consintration
+    #next_pos = adjustable_integer args, "size", next_pos, args.state.global_size
+    #next_pos = adjustable_integer args, "consintration", next_pos, args.state.global_consintration
 
-    args.state.grid.input
+    #args.state.grid.input
     args.state.grid.draw
 end
 

@@ -5,10 +5,10 @@ class Tile
                     :radius, :initial_sprite
     attr_gtk
 
-    def initialize i_position, i_sprite
+    def initialize i_position, i_sprite, ii_sprite
         @position = i_position
         @sprite = i_sprite
-        @initial_sprite = i_sprite
+        @initial_sprite = ii_sprite
         @neighbor = Hash.new
         @tiled = false
         @tile_offset = 0
@@ -16,7 +16,7 @@ class Tile
     end
 
     def reinitialize sprite, age, level, tiled
-        @sprite.path = sprite
+        @sprite = sprite
         @age = age
         @level = level
         @tiled = tiled

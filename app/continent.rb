@@ -158,7 +158,7 @@ class Continent
                         choice = @rng.rand(10)
 
                         if(choice >= 2)
-                            value[tile_to_release].reset
+                            #value[tile_to_release].sprite = @grid.initial_sprite
                         end
                     end
                 end
