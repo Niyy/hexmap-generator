@@ -8,8 +8,9 @@ $rng = Random.new
 
 def initialize_state
     $gtk.args.state.reset_label = []
-    $gtk.args.state.global_consintration = 7
+    $gtk.args.state.global_consintration = 50
     $gtk.args.state.global_size = 100
+    $gtk.args.state.continent_amount = 1
     $gtk.args.state.grid = HexGrid.new
     $gtk.args.state.grid.args = $gtk.args
     $gtk.args.state.grid.initial_sprite = "sprites/hex_water.png"
@@ -22,7 +23,7 @@ def tick args
 
     if(args.state.continents.empty?)
         puts "refresh"
-        for i in 1..5 do
+        for i in 0...args.state.continent_amount do
             root_x = $rng.rand(52)
             root_y = $rng.rand(21)
 
@@ -34,7 +35,7 @@ def tick args
     end
 
 
-    if(!args.state.continents.empty?)
+    if(!args.state.continents&.empty?)
         args.state.continents.each do |continent|
             if(!continent&.created)
                 continent.addLand args.state.grid.grid_positions
@@ -57,10 +58,14 @@ def tick args
         end
     end
 
-    #next_pos = adjustable_integer args, "size", next_pos, args.state.global_size
-    #next_pos = adjustable_integer args, "consintration", next_pos, args.state.global_consintration
+    next_pos = adjustable_integer args, "size", next_pos, args.state.global_size
+    args.state.global_size = next_pos[1]
+    next_pos = adjustable_integer args, "consintration", next_pos[0], args.state.global_consintration
+    args.state.global_consintration = next_pos[1]
+    next_pos = adjustable_integer args, "continent amount", next_pos[0], args.state.continent_amount
+    args.state.continent_amount = next_pos[1]
 
-    #args.state.grid.input
+    args.state.grid.input
     args.state.grid.draw
 end
 
@@ -79,13 +84,13 @@ def adjustable_integer args, ui_name, position, changeable_variable
     
     if args.inputs.mouse.click
         if (args.inputs.mouse.click.point.inside_rect? box_one)
-            changeable_variable = changeable_variable + 1
-        elsif (args.inputs.mouse.click.point.inside_rect? box_two)
             changeable_variable = changeable_variable - 1
+        elsif (args.inputs.mouse.click.point.inside_rect? box_two)
+            changeable_variable = changeable_variable + 1
         end
     end
 
     args.outputs.labels << [position + 15, 715, "#{changeable_variable}"]
 
-    return position + 63 + (ui_name.length * 10)
+    return [position + 63 + (ui_name.length * 10), changeable_variable]
 end
