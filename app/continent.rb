@@ -157,8 +157,8 @@ class Continent
                         tile_to_release = @rng.rand(value.size - 1)
                         choice = @rng.rand(10)
 
-                        if(choice >= 2)
-                            #value[tile_to_release].sprite = @grid.initial_sprite
+                        if(choice >= 0)
+                            value[tile_to_release].remove_tile
                         end
                     end
                 end

@@ -58,7 +58,7 @@ class HexGrid
     def clearGrid
         for i in 0..52 do
             for j in 0..21 do
-                @grid_positions[[i, j]].reinitialize [initial_sprite.x, initial_sprite.y, initial_sprite[2], initial_sprite[3], initial_sprite.path], 0, 0, false
+                @grid_positions[[i, j]].reinitialize_full initial_sprite.path, initial_sprite[2], initial_sprite[3], 0, 0, false
             end
         end
     end

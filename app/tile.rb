@@ -15,11 +15,24 @@ class Tile
         @radius = i_sprite.x / 2
     end
 
-    def reinitialize sprite, age, level, tiled
-        @sprite = sprite
+    def reinitialize_full sprite, w, h, age, level, tiled
+        @sprite.path = sprite
+        @sprite.w = w
+        @sprite.h = h
         @age = age
         @level = level
         @tiled = tiled
+    end
+
+    def reinitialize sprite, age, level, tiled
+        @sprite.path = sprite
+        @age = age
+        @level = level
+        @tiled = tiled
+    end
+
+    def remove_tile
+        @sprite = [@initial_sprite.x, @initial_sprite.y, @initial_sprite.w, @initial_sprite.h, @initial_sprite.path]
     end
 
     def reset
