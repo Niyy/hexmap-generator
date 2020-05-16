@@ -12,7 +12,7 @@ class Tile
         @neighbor = Hash.new
         @tiled = false
         @tile_offset = 0
-        @radius = i_sprite.x / 2
+        @radius = i_sprite.w / 2
     end
 
     def reinitialize_full sprite, w, h, age, level, tiled

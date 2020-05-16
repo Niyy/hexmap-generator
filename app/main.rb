@@ -22,7 +22,6 @@ def tick args
     initialize_state if $gtk.args.state.tick_count == 0
 
     if(args.state.continents.empty?)
-        puts "refresh"
         for i in 0...args.state.continent_amount do
             root_x = $rng.rand(52)
             root_y = $rng.rand(21)
@@ -44,21 +43,10 @@ def tick args
     end
 
 
-    args.state.reset = [3, 693, 20, 25]
-    args.state.reset_label = [25, 715, "Reset"]
-    next_pos = 25 + ("Reset".length * 10)
+    next_pos = [3]
+    next_pos = marked_ui_element args, "reset", next_pos[0], :friend_clear
 
-    args.outputs.borders << args.state.reset
-    args.outputs.labels << args.state.reset_label
-
-    if args.inputs.mouse.click
-        if args.inputs.mouse.click.point.inside_rect? args.state.reset
-            args.state.grid.clearGrid
-            args.state.continents.clear
-        end
-    end
-
-    next_pos = adjustable_integer args, "size", next_pos, args.state.global_size
+    next_pos = adjustable_integer args, "size", next_pos[0], args.state.global_size
     args.state.global_size = next_pos[1]
     next_pos = adjustable_integer args, "consintration", next_pos[0], args.state.global_consintration
     args.state.global_consintration = next_pos[1]
@@ -93,4 +81,28 @@ def adjustable_integer args, ui_name, position, changeable_variable
     args.outputs.labels << [position + 15, 715, "#{changeable_variable}"]
 
     return [position + 63 + (ui_name.length * 10), changeable_variable]
+end
+
+
+# 
+def marked_ui_element args, ui_name, position, called_functions
+    button = [position, 693, 20, 25]
+    label = [position + 25, 715, "#{ui_name}"]
+
+    if args.inputs.mouse.click
+        if args.inputs.mouse.click.point.inside_rect? button
+            method(called_functions).call
+        end
+    end
+
+    args.outputs.borders << button
+    args.outputs.labels << label
+
+    return [position + 25 + (ui_name.length * 10)]
+end
+
+
+def friend_clear
+    $gtk.args.state.grid.clearGrid
+    $gtk.args.state.continents.clear
 end
