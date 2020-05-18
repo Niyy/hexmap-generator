@@ -1,5 +1,5 @@
 class Token
-    attr_accessor :position, :population, :sprite
+    attr_accessor :position, :population, :sprite, :center, :speed
     attr_gtk
 
     @next_position
@@ -7,16 +7,15 @@ class Token
     @current_tile
     @next_tile
     @move_percent
+    @mull_count
 
-    def initialize args, i_current_tile, i_sprite
+    def initialize args, i_current_tile, i_sprite, i_speed
         @args = args
         @current_tile = i_current_tile
         @sprite = i_sprite
-    end
-
-
-    def move
-        
+        @center = [(@sprite.w / 2) + @sprite.x, (@sprite.h / 2) + @sprite.y]
+        @speed = i_speed
+        @mullCount = 0
     end
 
 
@@ -24,26 +23,64 @@ class Token
         next_position_radius ||= args.rand * @current_tile.radius
         next_position_angle ||= args.rand * 360
 
-        @next_position =    [@current_tile.sprite.x + (Math.cos(next_position_angle * (Math::PI/180)) * next_position_radius),
-                            @current_tile.sprite.y + (Math.sin(next_position_angle * (Math::PI/180)) * next_position_radius)]
-        
-        puts "<------------------------"
-        puts next_position_radius
-        puts next_position_angle
-        puts @next_position
+        @next_position =    [@current_tile.center[0] + (Math.cos(next_position_angle * (Math::PI/180)) * next_position_radius),
+                            @current_tile.center[1] + (Math.sin(next_position_angle * (Math::PI/180)) * next_position_radius)]
+
+        x = (@next_position[0] - @center[0])
+        y = (@next_position[1] - @center[1])
+        magnitude = Math.sqrt(x**2 + y**2)
+
+        x = x / magnitude
+        y = y / magnitude
+
+        @mull_count
+
+        @move_percent = [x * @speed, y * @speed]
     end
 
 
     def mullAround
-        x = (@next_position.sprite.x - @sprite.x)
-        y = (@next_position.sprite.y - @sprite.y)
-        distance = Math.sqrt((x**2 + y**2))
+        if !@next_position.nil?
+            x = (@next_position[0] - @center[0])
+            y = (@next_position[1] - @center[1])
+            distance = Math.sqrt((x**2 + y**2))
 
-        if(distance <= 0.01)
-            #To Do
-        else
-            @sprite.x += @move_percent[0]
-            @sprite.y += @move_percent[1]
+            if(distance <= @move_percent[0].abs || distance <= @move_percent[1].abs)
+                chooseMullTarget
+            else
+                @sprite.x += @move_percent[0]
+                @sprite.y += @move_percent[1]
+            end
+
+            @center = [(@sprite.w / 2) + @sprite.x, (@sprite.h / 2) + @sprite.y]
         end
     end
+
+    def chooseNextTile
+        possible_locations = Array.new
+
+        if !@current_tile.neighbors.empty?
+            @current_tile.neighbors.each do |a_neighbor|
+                if a_neighbor.tiled
+                    possible_locations << a_neighbor
+                end
+            end
+        end
+
+        @current_tile = possible_locations[(args.rand % possible_locations.size).floor]
+    end
+
+    def serialize                                                                 
+        { position: position, population: population, sprite: sprite, center: center, 
+        speed: speed }                                                                
+    end
+
+    def inspect                                                                   
+        serialize.to_s
+    end
+    
+    def to_s
+        serialize.to_s
+    end
+    
 end

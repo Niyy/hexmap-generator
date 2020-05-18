@@ -2,8 +2,7 @@
 # Level - Negative values are bellow sea level, positive values are above sea level, and zero is beaches
 class Tile
     attr_accessor   :position, :tiled, :sprite, :top_sprite, :neighbor, :age, :level, :tile_offset,
-                    :radius, :initial_sprite
-    attr_gtk
+                    :radius, :initial_sprite, :center
 
     def initialize i_position, i_sprite, ii_sprite
         @position = i_position
@@ -13,6 +12,7 @@ class Tile
         @tiled = false
         @tile_offset = 0
         @radius = i_sprite.w / 2
+        @center = [(sprite.w / 2) + sprite.x, (sprite.h / 2) + sprite.y]
     end
 
     def reinitialize_full sprite, w, h, age, level, tiled
@@ -90,7 +90,7 @@ class Tile
 
     def serialize
         { position: position, tiled: tiled, sprite: sprite, top_sprite: top_sprite, 
-            neighbor: neighbor, age: age, level: level, tile_offset: tile_offset }
+            neighbor: neighbor, age: age, level: level, tile_offset: tile_offset, radius: radius }
     end
 
     def inspect
