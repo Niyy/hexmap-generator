@@ -1,3 +1,5 @@
+#Tile holds information on one tile of the grid.
+
 # Age - 0 is the oldest parts of the continent. The greater the age the younder it is
 # Level - Negative values are bellow sea level, positive values are above sea level, and zero is beaches
 class Tile

@@ -3,12 +3,10 @@ require 'app/hex-grid.rb'
 require 'app/continent.rb'
 
 $rng = Random.new
-# $grid = HexGrid.new
-# $continents = Array.new
 
 def initialize_state
     $gtk.args.state.reset_label = []
-    $gtk.args.state.global_consintration = 50
+    $gtk.args.state.global_consintration = 100
     $gtk.args.state.global_size = 100
     $gtk.args.state.continent_amount = 1
     $gtk.args.state.grid = HexGrid.new
@@ -61,6 +59,7 @@ end
 def adjustable_integer args, ui_name, position, changeable_variable
     box_one = [position, 693, 15, 25]
     box_two = [position + 45, 693, 15, 25]
+    adder = 1
     
     args.outputs.borders << [position, 693, 15, 25]
     args.outputs.labels << [position + 2, 715, "-"]
@@ -69,18 +68,24 @@ def adjustable_integer args, ui_name, position, changeable_variable
     args.outputs.labels << [position + 47, 715, "+"]
 
     args.outputs.labels << [position + 63, 715, ui_name]
+
+    if args.inputs.keyboard.shift
+        puts "Happy"
+        adder = 10
+    end
     
     if args.inputs.mouse.click
         if (args.inputs.mouse.click.point.inside_rect? box_one)
-            changeable_variable = changeable_variable - 1
+            changeable_variable = changeable_variable - adder
         elsif (args.inputs.mouse.click.point.inside_rect? box_two)
-            changeable_variable = changeable_variable + 1
+            changeable_variable = changeable_variable + adder
         end
     end
 
     args.outputs.labels << [position + 15, 715, "#{changeable_variable}"]
+    args.outputs.labels << [position + 73 + (ui_name.length * 10), 715, "|"]
 
-    return [position + 63 + (ui_name.length * 10), changeable_variable]
+    return [position + 100 + (ui_name.length * 10), changeable_variable]
 end
 
 
@@ -97,8 +102,9 @@ def marked_ui_element args, ui_name, position, called_functions
 
     args.outputs.borders << button
     args.outputs.labels << label
+    args.outputs.labels << [position + 30 + (ui_name.length * 10), 715, "|"]
 
-    return [position + 25 + (ui_name.length * 10)]
+    return [position + 55 + (ui_name.length * 10)]
 end
 
 

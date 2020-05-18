@@ -1,5 +1,6 @@
 require 'app/tile.rb'
 
+# Continents hold references to areas on the grid that make up the world.
 class Continent
     attr_accessor :tile_queue, :initialized, :size, :created, :consintration, :wide_adder
     attr_gtk
@@ -133,6 +134,14 @@ class Continent
 
 
     def checkForUnpleasentTiles
+        checkHorizontal
+        # checkVertical
+
+        puts "End Construction"
+    end
+
+
+    def checkHorizontal
         straights ||= Hash.new
 
         @tiles.each { |key, value| 
@@ -155,9 +164,34 @@ class Continent
                     end
                 end
         }
-
-        puts "End Construction"
     end
+
+
+    def checkVertical
+        vertical ||= Hash.new
+
+        @tiles.each { |key, value| 
+            vertical[value.position[1]] ||= Array.new
+
+            if(value.neighbor.size <= 4)
+                vertical[value.position[1]] << value
+            end
+        }
+
+        vertical.each { |key, value|
+                if(value.size >= 4)
+                    for i in 0..(value.size - 4) do
+                        tile_to_release = @rng.rand(value.size - 1)
+
+                        if(value[tile_to_release].position[0] != 0 && value[tile_to_release].position[0] != 52 &&
+                            value[tile_to_release].position[1] != 0 && value[tile_to_release].position[1] != 21)
+                            value[tile_to_release].remove_tile
+                        end
+                    end
+                end
+        }
+    end
+
 
     def findLevelSprite level, tile
 

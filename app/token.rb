@@ -1,3 +1,4 @@
+# Token class is the base class for all other classes that will move across the map.
 class Token
     attr_accessor :position, :population, :sprite, :center, :speed
     attr_gtk
@@ -33,8 +34,6 @@ class Token
         x = x / magnitude
         y = y / magnitude
 
-        @mull_count
-
         @move_percent = [x * @speed, y * @speed]
     end
 
@@ -46,7 +45,12 @@ class Token
             distance = Math.sqrt((x**2 + y**2))
 
             if(distance <= @move_percent[0].abs || distance <= @move_percent[1].abs)
+                if mull_count <= 0
+                    chooseNextTile
+                end
+
                 chooseMullTarget
+                mull_count--
             else
                 @sprite.x += @move_percent[0]
                 @sprite.y += @move_percent[1]
@@ -67,6 +71,7 @@ class Token
             end
         end
 
+        @mull_count = args.rand * 6
         @current_tile = possible_locations[(args.rand % possible_locations.size).floor]
     end
 
