@@ -16,7 +16,7 @@ class Token
         @sprite = i_sprite
         @center = [(@sprite.w / 2) + @sprite.x, (@sprite.h / 2) + @sprite.y]
         @speed = i_speed
-        @mullCount = 0
+        @mull_count = args.rand * 6
     end
 
 
@@ -39,18 +39,20 @@ class Token
 
 
     def mullAround
+
         if !@next_position.nil?
             x = (@next_position[0] - @center[0])
             y = (@next_position[1] - @center[1])
             distance = Math.sqrt((x**2 + y**2))
 
             if(distance <= @move_percent[0].abs || distance <= @move_percent[1].abs)
-                if mull_count <= 0
+                if (@mull_count <= 0)
                     chooseNextTile
                 end
 
                 chooseMullTarget
-                mull_count--
+                @mull_count -= 1
+                puts @mull_count
             else
                 @sprite.x += @move_percent[0]
                 @sprite.y += @move_percent[1]
@@ -63,16 +65,24 @@ class Token
     def chooseNextTile
         possible_locations = Array.new
 
-        if !@current_tile.neighbors.empty?
-            @current_tile.neighbors.each do |a_neighbor|
-                if a_neighbor.tiled
-                    possible_locations << a_neighbor
+        if !@current_tile.neighbor.empty?
+            @current_tile.neighbor.each_value { |a_neighbor|
+                puts "some sprite: #{a_neighbor}------------->"
+
+                if $gtk.args.state.tiles[a_neighbor].tiled
+                    possible_locations << $gtk.args.state.tiles[a_neighbor]
                 end
-            end
+            }
         end
 
+        puts "size: #{possible_locations.size}"  
+        puts "#{@current_tile}<----------"
+
         @mull_count = args.rand * 6
-        @current_tile = possible_locations[(args.rand % possible_locations.size).floor]
+
+        if possible_locations.size > 0 
+            @current_tile = possible_locations[(args.rand * possible_locations.size).floor]
+        end
     end
 
     def serialize                                                                 
