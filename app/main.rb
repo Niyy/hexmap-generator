@@ -1,6 +1,7 @@
 # 1280x720
 require 'app/hex-grid.rb'
 require 'app/continent.rb'
+require 'app/token.rb'
 
 $rng = Random.new
 
@@ -14,6 +15,8 @@ def initialize_state
     $gtk.args.state.grid.initial_sprite = "sprites/hex_water.png"
     $gtk.args.state.grid.setUpGrid
     $gtk.args.state.continents = Array.new
+    $gtk.args.state.token_list = Hash.new
+    $gtk.args.state.token_count = 0
 end
 
 def tick args
@@ -24,7 +27,7 @@ def tick args
             root_x = $rng.rand(52)
             root_y = $rng.rand(21)
 
-            args.state.continents.push Continent.new(args.state.grid.grid_positions[[root_x, root_y]], $rng, 
+            args.state.continents.push Continent.new(args, args.state.grid.grid_positions[[root_x, root_y]], $rng, 
                                                     args.state.grid.grid_positions, args.state.global_size, args.state.global_consintration)
             args.state.continents.last.createContinent
             args.state.continents.last.args = args
@@ -53,6 +56,9 @@ def tick args
 
     args.state.grid.input
     args.state.grid.draw
+    # args.state.token_list.each_value { |value|
+    #     args.outputs.sprites << value.sprite
+    # }
 end
 
 

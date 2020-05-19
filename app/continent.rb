@@ -1,11 +1,11 @@
 require 'app/tile.rb'
+require 'app/token.rb'
 
 # Continents hold references to areas on the grid that make up the world.
 class Continent
-    attr_accessor :tile_queue, :initialized, :size, :created, :consintration, :wide_adder
+    attr_accessor :tile_queue, :initialized, :size, :created, :consintration, :wide_adder, :root_tile
     attr_gtk
 
-    @root_tile
     @tiles
     @width
     @current_size
@@ -14,7 +14,8 @@ class Continent
     @grid
 
 
-    def initialize root, rng_gen, grid, i_size, i_consintration
+    def initialize args, root, rng_gen, grid, i_size, i_consintration
+        @args = args
         @root_tile = root
         @tiles = Hash.new
         @rng = rng_gen
@@ -136,8 +137,17 @@ class Continent
     def checkForUnpleasentTiles
         checkHorizontal
         # checkVertical
+        #spawnToken
 
         puts "End Construction"
+    end
+
+
+    def spawnToken
+        puts "spwaning"
+        @args.state.token_list[0] = (Token.new(@args, @grid, @root_tile,
+            [@root_tile.sprite.x, @root_tile.y, 8, 8, "sprites/circle-black.png"], 0.2))
+        @args.state.token_count += 1
     end
 
 

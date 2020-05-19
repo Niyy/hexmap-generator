@@ -21,7 +21,7 @@ class Tile
         @sprite.path = sprite
         @sprite.w = w
         @sprite.h = h
-        @age = age
+        @age = age  
         @level = level
         @tiled = tiled
     end

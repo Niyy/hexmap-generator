@@ -1,6 +1,6 @@
 # Token class is the base class for all other classes that will move across the map.
 class Token
-    attr_accessor :position, :population, :sprite, :center, :speed
+    attr_accessor :position, :population, :sprite, :center, :speed, :grid
     attr_gtk
 
     @next_position
@@ -10,8 +10,9 @@ class Token
     @move_percent
     @mull_count
 
-    def initialize args, i_current_tile, i_sprite, i_speed
+    def initialize args, grid, i_current_tile, i_sprite, i_speed
         @args = args
+        @grid = grid
         @current_tile = i_current_tile
         @sprite = i_sprite
         @center = [(@sprite.w / 2) + @sprite.x, (@sprite.h / 2) + @sprite.y]
@@ -67,16 +68,16 @@ class Token
 
         if !@current_tile.neighbor.empty?
             @current_tile.neighbor.each_value { |a_neighbor|
-                puts "some sprite: #{a_neighbor}------------->"
+                # puts "some sprite: #{a_neighbor}------------->"
 
-                if $gtk.args.state.tiles[a_neighbor].tiled
-                    possible_locations << $gtk.args.state.tiles[a_neighbor]
+                if @grid[a_neighbor].tiled
+                    possible_locations << @grid[a_neighbor]
                 end
             }
         end
 
-        puts "size: #{possible_locations.size}"  
-        puts "#{@current_tile}<----------"
+        # puts "size: #{possible_locations.size}"  
+        # puts "#{@current_tile}<----------"
 
         @mull_count = args.rand * 6
 
