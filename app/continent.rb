@@ -75,12 +75,12 @@ class Continent
                     end
 
                     queue.push(grid[[next_position.x, next_position.y]])
-                    current_tile.neighbor[next_position] = grid[next_position]
+                    current_tile.neighbor[next_position] = next_position
                 end
             end
 
             if(!grid[[next_position.x, next_position.y]].neighbor.has_key?(current_tile.position))
-                grid[[next_position.x, next_position.y]].neighbor[current_tile.position] = current_tile
+                grid[[next_position.x, next_position.y]].neighbor[current_tile.position] = current_tile.position
             end
         end
     end
@@ -137,7 +137,7 @@ class Continent
     def checkForUnpleasentTiles
         checkHorizontal
         # checkVertical
-        #spawnToken
+        spawnToken
 
         puts "End Construction"
     end
@@ -145,8 +145,9 @@ class Continent
 
     def spawnToken
         puts "spwaning"
-        @args.state.token_list[0] = (Token.new(@args, @grid, @root_tile,
-            [@root_tile.sprite.x, @root_tile.y, 8, 8, "sprites/circle-black.png"], 0.2))
+        @args.state.token_list[@args.state.token_count] = (Token.new(@args, @grid, @root_tile,
+            [@root_tile.sprite.x, @root_tile.sprite.y, 8, 8, "sprites/circle-black.png"], 0.2))
+        @args.state.token_list[@args.state.token_count].chooseInternalTarget
         @args.state.token_count += 1
     end
 

@@ -1,7 +1,7 @@
 # 1280x720
 require 'app/hex-grid.rb'
 require 'app/continent.rb'
-require 'app/token.rb'
+# require 'app/token.rb'
 
 $rng = Random.new
 
@@ -56,9 +56,10 @@ def tick args
 
     args.state.grid.input
     args.state.grid.draw
-    # args.state.token_list.each_value { |value|
-    #     args.outputs.sprites << value.sprite
-    # }
+    args.state.token_list.each_value { |value|
+        value.internalMove
+        args.outputs.sprites << value.sprite
+    }
 end
 
 
@@ -117,4 +118,29 @@ end
 def friend_clear
     $gtk.args.state.grid.clearGrid
     $gtk.args.state.continents.clear
+    $gtk.args.state.token_list.clear
+end
+
+
+def puts_state state, objects_sceen = []
+    $gtk.append_file 'trace_state.txt', "circular reference detected! #{state} \n" and return if objects_sceen.include? state 
+    objects_sceen << state
+    if state.respond_to? :as_hash
+      state.as_hash.each do |k, v|
+        $gtk.append_file 'trace_state.txt', "#{k}\n"
+          puts_state v, objects_sceen 
+      end
+    elsif state.is_a? Hash
+      state.each do |k, v|
+        $gtk.append_file 'trace_state.txt', "#{k}\n"
+          puts_state v, objects_sceen
+      end
+    elsif state.is_a? Array
+      state.each_with_index do |v, i|
+            $gtk.append_file 'trace_state.txt', "#{v}\n"
+        puts_state v, objects_sceen
+      end
+    else
+        $gtk.append_file 'trace_state.txt', "#{state}\n"
+    end
 end

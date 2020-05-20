@@ -21,7 +21,9 @@ class Token
     end
 
 
-    def chooseMullTarget
+    # Choose an target with in the tile
+    # This could be in the next tile chosen.
+    def chooseInternalTarget
         next_position_radius ||= args.rand * @current_tile.radius
         next_position_angle ||= args.rand * 360
 
@@ -38,8 +40,8 @@ class Token
         @move_percent = [x * @speed, y * @speed]
     end
 
-
-    def mullAround
+    # Move with in the given tile
+    def internalMove
 
         if !@next_position.nil?
             x = (@next_position[0] - @center[0])
@@ -51,7 +53,7 @@ class Token
                     chooseNextTile
                 end
 
-                chooseMullTarget
+                chooseInternalTarget
                 @mull_count -= 1
                 puts @mull_count
             else
@@ -62,6 +64,7 @@ class Token
             @center = [(@sprite.w / 2) + @sprite.x, (@sprite.h / 2) + @sprite.y]
         end
     end
+
 
     def chooseNextTile
         possible_locations = Array.new
@@ -85,6 +88,7 @@ class Token
             @current_tile = possible_locations[(args.rand * possible_locations.size).floor]
         end
     end
+
 
     def serialize                                                                 
         { position: position, population: population, sprite: sprite, center: center, 

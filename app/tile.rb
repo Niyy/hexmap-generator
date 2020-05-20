@@ -24,6 +24,7 @@ class Tile
         @age = age  
         @level = level
         @tiled = tiled
+        @neighbor = Hash.new
     end
 
     def reinitialize sprite, age, level, tiled
@@ -31,6 +32,7 @@ class Tile
         @age = age
         @level = level
         @tiled = tiled
+        @neighbor = Hash.new
     end
 
     def remove_tile
