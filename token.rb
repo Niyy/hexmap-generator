@@ -1,6 +1,6 @@
 # Token class is the base class for all other classes that will move across the map.
 class Token
-    attr_accessor :position, :population, :sprite, :center, :speed, :grid
+    attr_accessor :position, :population, :sprite, :center, :speed
     attr_gtk
 
     @next_position
@@ -10,20 +10,17 @@ class Token
     @move_percent
     @mull_count
 
-    def initialize args, grid, i_current_tile, i_sprite, i_speed
+    def initialize args, i_current_tile, i_sprite, i_speed
         @args = args
-        @grid = grid
         @current_tile = i_current_tile
         @sprite = i_sprite
         @center = [(@sprite.w / 2) + @sprite.x, (@sprite.h / 2) + @sprite.y]
         @speed = i_speed
-        @mull_count = args.rand * 6
+        @mullCount = 0
     end
 
 
-    # Choose an target with in the tile
-    # This could be in the next tile chosen.
-    def chooseInternalTarget
+    def chooseMullTarget
         next_position_radius ||= args.rand * @current_tile.radius
         next_position_angle ||= args.rand * 360
 
@@ -40,9 +37,8 @@ class Token
         @move_percent = [x * @speed, y * @speed]
     end
 
-    # Move with in the given tile
-    def internalMove
 
+    def mullAround
         if !@next_position.nil?
             x = (@next_position[0] - @center[0])
             y = (@next_position[1] - @center[1])
@@ -53,8 +49,8 @@ class Token
                     chooseNextTile
                 end
 
-                chooseInternalTarget
-                @mull_count -= 1
+                chooseMullTarget
+                @mull_count--
             else
                 @sprite.x += @move_percent[0]
                 @sprite.y += @move_percent[1]
@@ -64,26 +60,20 @@ class Token
         end
     end
 
-
     def chooseNextTile
         possible_locations = Array.new
 
-        if !@current_tile.neighbor.empty?
-            @current_tile.neighbor.each_value { |a_neighbor|
-
-                if @grid[a_neighbor].tiled
-                    possible_locations << @grid[a_neighbor]
+        if !@current_tile.neighbors.empty?
+            @current_tile.neighbors.each do |a_neighbor|
+                if a_neighbor.tiled
+                    possible_locations << a_neighbor
                 end
-            }
+            end
         end
 
         @mull_count = args.rand * 6
-
-        if possible_locations.size > 0 
-            @current_tile = possible_locations[(args.rand * possible_locations.size).floor]
-        end
+        @current_tile = possible_locations[(args.rand % possible_locations.size).floor]
     end
-
 
     def serialize                                                                 
         { position: position, population: population, sprite: sprite, center: center, 

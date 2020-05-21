@@ -3,7 +3,8 @@ require 'app/token.rb'
 
 # Continents hold references to areas on the grid that make up the world.
 class Continent
-    attr_accessor :tile_queue, :initialized, :size, :created, :consintration, :wide_adder, :root_tile
+    attr_accessor :tile_queue, :initialized, :size, :created, :consintration, :wide_adder, :root_tile, :random_off, :sprawling,
+                    :sprawl_amount
     attr_gtk
 
     @tiles
@@ -11,10 +12,11 @@ class Continent
     @current_size
     @rng
     @finished
+    @sprawling
     @grid
 
 
-    def initialize args, root, rng_gen, grid, i_size, i_consintration
+    def initialize args, root, rng_gen, grid, i_size, i_consintration, i_randomness, i_sprawling, i_sprawl_amount
         @args = args
         @root_tile = root
         @tiles = Hash.new
@@ -22,14 +24,19 @@ class Continent
         @size = i_size
         @current_size = 0
         @consintration = i_consintration
+        @sprawl_amount = i_sprawl_amount
         @wide_adder = 0
         @created = false
         @initialized = false
         @tile_queue = Array.new
         @grid = grid
+        @random_off = i_randomness
+        @sprawling = i_sprawling
     end
 
     
+    # Should be broken up. Way to big.
+    # This class is designed too spawn a new hex at a given location
     def spawnTile grid, next_position, queue, current_root, current_tile
 
         if((next_position.x >= 0 && next_position.x <= 52) && 
@@ -39,9 +46,12 @@ class Continent
                 rand_num = @rng.rand(@consintration)
                 dist = (Math.sqrt((current_root.position.x - next_position.x)**2 + (current_root.position.y - (next_position.y))**2))
 
-                if(rand_num > dist)
+                if(@random_off || rand_num > dist)
                     translater = rand(12)
 
+                    # The translater helps define what tiles will spawn there
+                    # Each tile has a level, this level will shift up, down, or not at all.
+                    # Would love to flesh this out more.
                     if(translater <= 1)
                         level = -1
                     elsif(translater > 1 && translater < 9)
@@ -85,8 +95,10 @@ class Continent
         end
     end
 
-
+    # Sets up continent after being spawned in main
     def createContinent
+        # puts "randomness off: #{@random_off}"
+        # puts "off shooting: #{@sprawling}"
         dist = 0;
 
         @root_tile.sprite.path = "sprites/hex_plain.png"
@@ -99,12 +111,15 @@ class Continent
     end
 
 
+    # The called function that will kick off adding tiled tiles each tick.
     def addLand grid
         current_root ||= @root_tile
 
         if !@tile_queue.empty?
             current_tile = @tile_queue.shift
-            #checkForOffShoot current_tile, current_root
+            if @sprawling
+                checkForOffShoot current_tile, current_root
+            end
             @current_size += 1
             
             spawnTile(grid, current_tile.upper_left, @tile_queue, current_root, current_tile)
@@ -126,10 +141,8 @@ class Continent
     def checkForOffShoot current_tile, current_root
         rand_num = @rng.rand(100)
 
-        if(rand_num <= 40)
-            current_root.sprite.path = "sprites/hex_grass.png"
+        if(rand_num <= @sprawl_amount)
             current_root = current_tile
-            current_root.sprite.path = "sprites/circle-blue.png"
         end
     end
 
@@ -144,9 +157,8 @@ class Continent
 
 
     def spawnToken
-        puts "spwaning"
         @args.state.token_list[@args.state.token_count] = (Token.new(@args, @grid, @root_tile,
-            [@root_tile.sprite.x, @root_tile.sprite.y, 8, 8, "sprites/circle-black.png"], 0.2))
+            [@root_tile.sprite.x, @root_tile.sprite.y, 8, 8, "sprites/wanderer.png"], 0.2))
         @args.state.token_list[@args.state.token_count].chooseInternalTarget
         @args.state.token_count += 1
     end
@@ -224,7 +236,8 @@ class Continent
     
     def serialize
         { tile_queue: tile_queue, initialized: initialized, size: size, 
-            created: created, consintration: consintration, wide_adder: wide_adder }
+            created: created, consintration: consintration, wide_adder: wide_adder,  
+            random_off: random_off, sprawling: sprawling}
     end
 
     def inspect

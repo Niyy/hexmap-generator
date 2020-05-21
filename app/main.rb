@@ -9,6 +9,9 @@ def initialize_state
     $gtk.args.state.reset_label = []
     $gtk.args.state.global_consintration = 100
     $gtk.args.state.global_size = 100
+    $gtk.args.state.sprawl_amount = 100
+    $gtk.args.state.random_tick = false
+    $gtk.args.state.sprawling_tick = false
     $gtk.args.state.continent_amount = 1
     $gtk.args.state.grid = HexGrid.new
     $gtk.args.state.grid.args = $gtk.args
@@ -17,6 +20,9 @@ def initialize_state
     $gtk.args.state.continents = Array.new
     $gtk.args.state.token_list = Hash.new
     $gtk.args.state.token_count = 0
+
+    $gtk.args.state.random_count = -11
+    $gtk.args.state.reset_count = -11
 end
 
 def tick args
@@ -28,7 +34,9 @@ def tick args
             root_y = $rng.rand(21)
 
             args.state.continents.push Continent.new(args, args.state.grid.grid_positions[[root_x, root_y]], $rng, 
-                                                    args.state.grid.grid_positions, args.state.global_size, args.state.global_consintration)
+                                                    args.state.grid.grid_positions, args.state.global_size,
+                                                    args.state.global_consintration, args.state.random_tick, 
+                                                    args.state.sprawling_tick, args.state.sprawl_amount)
             args.state.continents.last.createContinent
             args.state.continents.last.args = args
         end
@@ -46,6 +54,8 @@ def tick args
 
     next_pos = [3]
     next_pos = marked_ui_element args, "reset", next_pos[0], :friend_clear
+    next_pos = marked_ui_element args, "randomness", next_pos[0], :mark_randomness, args.state.random_tick
+    next_pos = marked_ui_element args, "sprawling", next_pos[0], :mark_sprawling, args.state.sprawling_tick
 
     next_pos = adjustable_integer args, "size", next_pos[0], args.state.global_size
     args.state.global_size = next_pos[1]
@@ -53,6 +63,8 @@ def tick args
     args.state.global_consintration = next_pos[1]
     next_pos = adjustable_integer args, "continent amount", next_pos[0], args.state.continent_amount
     args.state.continent_amount = next_pos[1]
+    next_pos = adjustable_integer args, "sprawl amount", next_pos[0], args.state.sprawl_amount
+    args.state.sprawl_amount = next_pos[1]
 
     args.state.grid.input
     args.state.grid.draw
@@ -76,8 +88,7 @@ def adjustable_integer args, ui_name, position, changeable_variable
 
     args.outputs.labels << [position + 63, 715, ui_name]
 
-    if args.inputs.keyboard.shift
-        puts "Happy"
+    if args.inputs.keyboard.z
         adder = 10
     end
     
@@ -97,17 +108,23 @@ end
 
 
 # 
-def marked_ui_element args, ui_name, position, called_functions
+def marked_ui_element args, ui_name, position, called_functions, value = false,
     button = [position, 693, 20, 25]
     label = [position + 25, 715, "#{ui_name}"]
 
     if args.inputs.mouse.click
         if args.inputs.mouse.click.point.inside_rect? button
+            count = args.state.tick_count
             method(called_functions).call
         end
     end
 
-    args.outputs.borders << button
+    if(count + 1 > args.state.tick_count || value)
+        args.outputs.solids << button
+    else
+        args.outputs.borders << button
+    end
+
     args.outputs.labels << label
     args.outputs.labels << [position + 30 + (ui_name.length * 10), 715, "|"]
 
@@ -122,6 +139,17 @@ def friend_clear
 end
 
 
+def mark_randomness
+    $gtk.args.state.random_tick = !$gtk.args.state.random_tick
+end
+
+
+def mark_sprawling
+    $gtk.args.state.sprawling_tick = !$gtk.args.state.sprawling_tick
+end
+
+
+# Amir Rajan added to help find circular
 def puts_state state, objects_sceen = []
     $gtk.append_file 'trace_state.txt', "circular reference detected! #{state} \n" and return if objects_sceen.include? state 
     objects_sceen << state

@@ -45,11 +45,11 @@ class HexGrid
                 for j in 0..21 do
                     tiling =  @grid_positions[[52 - i, 21 - j]]
                     outputs.sprites << tiling.sprite
-                    outputs.labels << [tiling.sprite.x + 2, tiling.sprite.y + 17, "#{52 - i},#{21 - j}", -6]
+                    #outputs.labels << [tiling.sprite.x + 2, tiling.sprite.y + 17, "#{52 - i},#{21 - j}", -6]
                 end
             end
             
-            if(!state.current_mouse_pos.nil?)
+            if(!state.current_mouse_pos.x != -100)
                 outputs.sprites << state.current_mouse_pos
             end
         end
@@ -87,7 +87,7 @@ class HexGrid
                     state.current_mouse_pos = [mouse_position.x, mouse_position.y, 
                                                 mouse_position.w, mouse_position.h, "sprites/circle-orange.png"]
                 else
-                    state.current_mouse_pos = nil
+                    state.current_mouse_pos = [-100, -100, 1, 1, "sprites/circle-orange.png"]
                 end
             end
         end
