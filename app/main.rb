@@ -59,7 +59,7 @@ def tick args
 
     next_pos = adjustable_integer args, "size", next_pos[0], args.state.global_size
     args.state.global_size = next_pos[1]
-    next_pos = adjustable_integer args, "consintration", next_pos[0], args.state.global_consintration
+    next_pos = adjustable_integer args, "concentration", next_pos[0], args.state.global_consintration
     args.state.global_consintration = next_pos[1]
     next_pos = adjustable_integer args, "continent amount", next_pos[0], args.state.continent_amount
     args.state.continent_amount = next_pos[1]
