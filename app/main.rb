@@ -1,6 +1,7 @@
 # 1280x720
 require 'app/hex-grid.rb'
 require 'app/continent.rb'
+require 'app/textbox.rb'
 # require 'app/token.rb'
 
 $rng = Random.new
@@ -55,16 +56,17 @@ def tick args
     next_pos = [3]
     next_pos = marked_ui_element args, "reset", next_pos[0], :friend_clear
     next_pos = marked_ui_element args, "randomness", next_pos[0], :mark_randomness, args.state.random_tick
-    next_pos = marked_ui_element args, "sprawling", next_pos[0], :mark_sprawling, args.state.sprawling_tick
+    new_textbox = TextBox.new args, [next_pos[0], 693]
+    new_textbox.draw
+    next_pos = [new_textbox.endPosition[0] + 20]
 
-    next_pos = adjustable_integer args, "size", next_pos[0], args.state.global_size
-    args.state.global_size = next_pos[1]
-    next_pos = adjustable_integer args, "concentration", next_pos[0], args.state.global_consintration
-    args.state.global_consintration = next_pos[1]
-    next_pos = adjustable_integer args, "continent amount", next_pos[0], args.state.continent_amount
-    args.state.continent_amount = next_pos[1]
-    next_pos = adjustable_integer args, "sprawl amount", next_pos[0], args.state.sprawl_amount
-    args.state.sprawl_amount = next_pos[1]
+    # next_pos = adjustable_integer args, "size", next_pos[0], args.state.global_size
+    # args.state.global_size = next_pos[1]
+    # next_pos = adjustable_integer args, "concentration", next_pos[0], args.state.global_consintration
+    # args.state.global_consintration = next_pos[1]
+    # next_pos = adjustable_integer args, "continent amount", next_pos[0], args.state.continent_amount
+    # args.state.continent_amount = next_pos[1]
+
 
     args.state.grid.input
     args.state.grid.draw
