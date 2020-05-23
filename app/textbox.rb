@@ -2,28 +2,43 @@ class TextBox
     attr_accessor :value, :dimensions, :location, :selected
     attr_gtk
 
-    def initialize i_args, i_location
+    def initialize i_args
         @args = i_args
-        @location = i_location
+        @location = [0, 0]
         @dimensions = [40, 25]
         @value = Array.new
+        @string_value = ""
     end
 
 
     def draw
         #args.outputs.borders << [@location[0], @location[1], @dimensions[0], @dimensions[1]]
-        if @args.keyboard.key_down.truthy_keys.length > 0
-            @args.outputs.labels << [@location[0], @location[1] + 22 , @args.keyboard.key_down.char]
-        end
+        @args.outputs.labels << [@location[0], @location[1] + 22 , @string_value]
     end
 
 
     def changeValue
+        if @args.keyboard.key_down.char && !@args.keyboard.key_down.backspace
+            @value << @args.keyboard.key_down.char
+        elsif @args.keyboard.key_down.backspace
+            @value.pop
+        end
 
+        if @string_value.length < @value.length
+            for i in (@string_value.length)...@value.length do
+                @string_value += @value[i]
+            end
+        elsif @string_value.length > @value.length
+            puts "hello"
+            for i in @value.length..@string_value.length do
+                @string_value = @string_value.chop
+            end
+        end
     end
 
 
     def endPosition
-        return @location + @dimensions
+        return_location = @location + @dimensions
+        return @location.x * value.length * 10
     end
 end
