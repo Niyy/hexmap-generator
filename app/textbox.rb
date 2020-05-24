@@ -18,20 +18,12 @@ class TextBox
 
 
     def changeValue
-        if @args.keyboard.key_down.raw_key > 47 && !@args.keyboard.key_down.raw_key < 58
-            @value << @args.keyboard.key_down.char
-        elsif @args.keyboard.key_down.backspace
-            @value.pop
+        if @args.keyboard.key_down.raw_key >= 48 &&
+        @args.keyboard.key_down.raw_key <= 57
+            @string_value += @args.keyboard.key_down.char
         end
-
-        if @string_value.length < @value.length
-            for i in (@string_value.length)...@value.length do
-                @string_value += @value[i]
-            end
-        elsif @string_value.length > @value.length
-            for i in @value.length..@string_value.length do
-                @string_value = @string_value.chop
-            end
+        if @args.keyboard.key_down.backspace
+            @string_value = @string_value.chop
         end
     end
 
