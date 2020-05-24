@@ -22,6 +22,7 @@ class TextBox
         @args.keyboard.key_down.raw_key <= 57
             @string_value += @args.keyboard.key_down.char
         end
+        
         if @args.keyboard.key_down.backspace
             @string_value = @string_value.chop
         end
