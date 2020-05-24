@@ -18,7 +18,7 @@ class TextBox
 
 
     def changeValue
-        if @args.keyboard.key_down.char && !@args.keyboard.key_down.backspace
+        if @args.keyboard.key_down.raw_key > 47 && !@args.keyboard.key_down.raw_key < 58
             @value << @args.keyboard.key_down.char
         elsif @args.keyboard.key_down.backspace
             @value.pop
@@ -29,7 +29,6 @@ class TextBox
                 @string_value += @value[i]
             end
         elsif @string_value.length > @value.length
-            puts "hello"
             for i in @value.length..@string_value.length do
                 @string_value = @string_value.chop
             end
@@ -41,4 +40,19 @@ class TextBox
         return_location = @location + @dimensions
         return @location.x * value.length * 10
     end
+
+
+    def serialize                                                                                                                                                                   
+        { value: value, dimensions: dimensions, location: location, selected: selected }                                                                                              
+    end                                                                                                                                                                             
+                                                                                                                                                                                      
+                                                                                                                       
+    def inspect                                                                                                                                                                     
+        serialize.to_s                                                                                                                                                                
+    end                                                                                                                                                                             
+                                                                                                                                                                                    
+                                                                                                                                    
+    def to_s                                                                                                                                                                        
+        serialize.to_s                                                                                                                                                                
+    end  
 end
