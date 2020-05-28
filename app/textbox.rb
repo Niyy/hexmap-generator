@@ -19,6 +19,12 @@ class TextBox
     end
 
 
+    def update
+        self.checkIfSelected
+        self.changeValue
+    end
+
+
     def changeValue
         if @selected
             if @args.keyboard.key_down.raw_key >= 48 &&
@@ -34,10 +40,14 @@ class TextBox
 
 
     def checkIfSelected
-        if @args.mouse.click.point.inside_rect? [@location[0], @location[1], @dimensions[0], @dimensions[1]]
-            @selected = true
-        else
-            @selected = false
+        if @args.mouse.click
+            if @args.mouse.click.point.inside_rect? [@location[0], @location[1], @dimensions[0], @dimensions[1]]
+                @selected = true
+                puts "selected"
+            else
+                @selected = false
+                puts "not selected"
+            end
         end
     end
 
