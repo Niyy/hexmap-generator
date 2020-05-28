@@ -21,7 +21,7 @@ def initialize_state
     $gtk.args.state.continents = Array.new
     $gtk.args.state.token_list = Hash.new
     $gtk.args.state.token_count = 0
-    $gtk.args.state.new_textbox = TextBox.new $gtk.args
+    $gtk.args.state.new_textbox = TextBox.new $gtk.args, 4
 
     $gtk.args.state.random_count = -11
     $gtk.args.state.reset_count = -11
