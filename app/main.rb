@@ -21,7 +21,7 @@ def initialize_state
     $gtk.args.state.continents = Array.new
     $gtk.args.state.token_list = Hash.new
     $gtk.args.state.token_count = 0
-    $gtk.args.state.new_textbox = TextBox.new $gtk.args, 4
+    $gtk.args.state.new_textbox = TextBox.new $gtk.args, 4, "size"
 
     $gtk.args.state.random_count = -11
     $gtk.args.state.reset_count = -11
@@ -61,6 +61,7 @@ def tick args
     args.state.new_textbox.location = [next_pos[0], 693]
     next_pos = args.state.new_textbox.endPosition
     args.state.new_textbox.draw
+    args.state.global_size = args.state.new_textbox.string_value.to_i
     # next_pos = [new_textbox.endPosition[0] + 20]
 
     # next_pos = adjustable_integer args, "size", next_pos[0], args.state.global_size
