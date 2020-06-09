@@ -21,7 +21,8 @@ def initialize_state
     $gtk.args.state.continents = Array.new
     $gtk.args.state.token_list = Hash.new
     $gtk.args.state.token_count = 0
-    $gtk.args.state.new_textbox = TextBox.new $gtk.args, 4, "size"
+    $gtk.args.state.size_textbox = TextBox.new $gtk.args, 100.to_s, 4, "size"
+    $gtk.args.state.concentration_textbox = TextBox.new $gtk.args, 100.to_s, 4, "concentration"
 
     $gtk.args.state.random_count = -11
     $gtk.args.state.reset_count = -11
@@ -34,10 +35,12 @@ def tick args
         for i in 0...args.state.continent_amount do
             root_x = $rng.rand(52)
             root_y = $rng.rand(21)
+            size = args.state.size_textbox.string_value.to_i
+            concentration = args.state.concentration_textbox.string_value.to_i
 
             args.state.continents.push Continent.new(args, args.state.grid.grid_positions[[root_x, root_y]], $rng, 
-                                                    args.state.grid.grid_positions, args.state.global_size,
-                                                    args.state.global_consintration, args.state.random_tick, 
+                                                    args.state.grid.grid_positions, args.state.size_textbox.string_value.to_i,
+                                                    args.state.concentration_textbox.string_value.to_i, args.state.random_tick, 
                                                     args.state.sprawling_tick, args.state.sprawl_amount)
             args.state.continents.last.createContinent
             args.state.continents.last.args = args
@@ -57,11 +60,18 @@ def tick args
     next_pos = [3]
     next_pos = marked_ui_element args, "reset", next_pos[0], :friend_clear
     next_pos = marked_ui_element args, "randomness", next_pos[0], :mark_randomness, args.state.random_tick
-    args.state.new_textbox.update
-    args.state.new_textbox.location = [next_pos[0], 693]
-    next_pos = args.state.new_textbox.endPosition
-    args.state.new_textbox.draw
-    args.state.global_size = args.state.new_textbox.string_value.to_i
+
+    args.state.size_textbox.update
+    args.state.size_textbox.location = [next_pos[0], 693]
+    next_pos = args.state.size_textbox.endPosition
+    args.state.size_textbox.draw
+
+    args.state.concentration_textbox.update
+    args.state.concentration_textbox.location = [next_pos[0], 693]
+    next_pos = args.state.concentration_textbox.endPosition
+    args.state.concentration_textbox.draw
+
+
     # next_pos = [new_textbox.endPosition[0] + 20]
 
     # next_pos = adjustable_integer args, "size", next_pos[0], args.state.global_size

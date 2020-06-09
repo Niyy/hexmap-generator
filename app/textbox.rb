@@ -3,7 +3,7 @@ class TextBox
         :cursor_to_numbers_location, :descriptor
     attr_gtk
 
-    def initialize i_args, char_length, i_descriptor
+    def initialize i_args, i_string_value, char_length, i_descriptor
         @args = i_args
         @location = [0, 0]
         @char_length = char_length
@@ -14,6 +14,7 @@ class TextBox
         @string_value = ""
         @selected = false
         @descriptor = i_descriptor
+        @string_value = i_string_value
     end
 
 
@@ -62,9 +63,9 @@ class TextBox
                 if @cursor_to_numbers_location == @string_value.length
                     @string_value = @args.keyboard.key_down.char + @string_value.slice(0..@cursor_to_numbers_location)
                 else
-                    @string_value = @string_value.slice(0...@cursor_to_numbers_location) +
+                    @string_value = @string_value.slice(0...(@string_value.length - @cursor_to_numbers_location)) +
                         @args.keyboard.key_down.char +
-                        @string_value.slice((@cursor_to_numbers_location)...@string_value.length)
+                        @string_value.slice((@string_value.length - @cursor_to_numbers_location)...@string_value.length)
                 end
             end
         end
@@ -80,6 +81,24 @@ class TextBox
                 if !ending.nil?
                     @string_value = start + ending
                 end
+            end
+        end
+
+        if @args.keyboard.key_down.return
+            @selected = false;
+        end
+
+        if @args.keyboard.key_down.delete
+            if @string_value.length >= @cursor_to_numbers_location
+                start = @string_value.slice(0...(@string_value.length - @cursor_to_numbers_location))
+                ending = @string_value.slice((@string_value.length - @cursor_to_numbers_location + 1)..@string_value.length)
+
+                if !ending.nil?
+                    @string_value = start + ending
+                end
+
+                @cursor_to_numbers_location -= 1
+                @cursor_location += 1
             end
         end
     end
@@ -112,7 +131,7 @@ class TextBox
 
     def endPosition
         return_location = @location + @dimensions
-        return @location.x * value.length * 10
+        return [@return_location * value.length * 10]
     end
 
 
