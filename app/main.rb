@@ -23,6 +23,7 @@ def initialize_state
     $gtk.args.state.token_count = 0
     $gtk.args.state.size_textbox = TextBox.new $gtk.args, 100.to_s, 4, "size"
     $gtk.args.state.concentration_textbox = TextBox.new $gtk.args, 100.to_s, 4, "concentration"
+    $gtk.args.state.continent_count_textbox = TextBox.new $gtk.args, 1.to_s, 4, "continent count"
 
     $gtk.args.state.random_count = -11
     $gtk.args.state.reset_count = -11
@@ -32,7 +33,7 @@ def tick args
     initialize_state if $gtk.args.state.tick_count == 0
 
     if(args.state.continents.empty?)
-        for i in 0...args.state.continent_amount do
+        for i in 0...args.state.continent_count_textbox.string_value.to_i do
             root_x = $rng.rand(52)
             root_y = $rng.rand(21)
             size = args.state.size_textbox.string_value.to_i
@@ -71,6 +72,10 @@ def tick args
     next_pos = args.state.concentration_textbox.endPosition
     args.state.concentration_textbox.draw
 
+    args.state.continent_count_textbox.update
+    args.state.continent_count_textbox.location = [next_pos[0], 693]
+    next_pos = args.state.continent_count_textbox.endPosition
+    args.state.continent_count_textbox.draw
 
     # next_pos = [new_textbox.endPosition[0] + 20]
 
