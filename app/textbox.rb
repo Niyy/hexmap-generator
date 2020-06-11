@@ -37,7 +37,7 @@ class TextBox
         end
 
         if @descriptor.length > 0
-            @args.outputs.labels << [@location[0] + 15 + (@descriptor.length * 10), @location[1] + 22, 
+            @args.outputs.labels << [@location[0] + 55, @location[1] + 22, 
                 @descriptor]
         end
     end
@@ -130,8 +130,7 @@ class TextBox
 
 
     def endPosition
-        return_location = @location + @dimensions
-        return [@return_location * value.length * 10]
+        return [@location[0] + 55 + (@descriptor.length * 12)]
     end
 
 
