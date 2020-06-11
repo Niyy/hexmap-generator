@@ -3,6 +3,8 @@ class TextBox
         :cursor_to_numbers_location, :descriptor
     attr_gtk
 
+    @tick_wait
+
     def initialize i_args, i_string_value, char_length, i_descriptor
         @args = i_args
         @location = [0, 0]
@@ -15,6 +17,7 @@ class TextBox
         @selected = false
         @descriptor = i_descriptor
         @string_value = i_string_value
+        @tick_wait = 0;
     end
 
 
@@ -32,9 +35,7 @@ class TextBox
         @args.outputs.labels << [@location[0] + x_position + 4, @location[1] + 22 , 
                                 @string_value[0, @char_length]]
                 
-        if @selected
-            @args.outputs.labels << [@location[0] + (@cursor_location * 10) - 2, @location[1] + 24, "|"]
-        end
+        cursorBlink
 
         if @descriptor.length > 0
             @args.outputs.labels << [@location[0] + 55, @location[1] + 22, 
@@ -53,7 +54,27 @@ class TextBox
     end
 
 
+    def cursorBlink
+        if @selected
+            if(@args.state.tick_count % 20 <= 8 || @args.state.tick_count <= @tick_wait)
+                @args.outputs.labels << [@location[0] + (@cursor_location * 10) - 2, @location[1] + 24, "|"]
+            end
+        end
+    end
+
+
     def changeValue
+        add_to_value
+        backspace_command
+        delete_command
+
+        if @args.keyboard.key_down.enter
+            @selected = false;
+        end
+    end
+
+
+    def add_to_value
         if @args.keyboard.key_down.raw_key >= 48 &&
         @args.keyboard.key_down.raw_key <= 57 && 
         @string_value.length < @char_length
@@ -69,7 +90,10 @@ class TextBox
                 end
             end
         end
-        
+    end
+
+
+    def backspace_command
         if @args.keyboard.key_down.backspace
 
             if @cursor_to_numbers_location == 0
@@ -83,11 +107,10 @@ class TextBox
                 end
             end
         end
+    end
 
-        if @args.keyboard.key_down.return
-            @selected = false;
-        end
 
+    def delete_command
         if @args.keyboard.key_down.delete
             if @string_value.length >= @cursor_to_numbers_location
                 start = @string_value.slice(0...(@string_value.length - @cursor_to_numbers_location))
@@ -109,9 +132,11 @@ class TextBox
             @cursor_to_numbers_location < @string_value.length
             @cursor_location -= 1
             @cursor_to_numbers_location += 1
+            @tick_wait = @args.state.tick_count + 5
         elsif   @args.keyboard.key_down.right && @cursor_location != 4
             @cursor_location += 1
             @cursor_to_numbers_location -= 1
+            @tick_wait = @args.state.tick_count + 5
         end
     end
 

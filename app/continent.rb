@@ -182,6 +182,7 @@ class Continent
 
                         if(value[tile_to_release].position[0] != 0 && value[tile_to_release].position[0] != 52 &&
                             value[tile_to_release].position[1] != 0 && value[tile_to_release].position[1] != 21)
+                            value[tile_to_release].tiled = false
                             value[tile_to_release].remove_tile
                         end
                     end
