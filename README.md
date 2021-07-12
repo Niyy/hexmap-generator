@@ -52,7 +52,7 @@ Turns off the randomness including what concentration does, but the wrap up when
 ## Text Boxes
 ---------------
 
-To make editing number variables in the toolbar, I created a text box. This text box can be edited somewhat similarly to most text inputs. It is lacking some features such as, when you click in the box the cursor will alwasy begin at the end of the value. You still can use the num pad to move the cursor to a spot you want to edit. This was a fun addition I made to help people play with the variables. The old version had a ticker and you could only tick up or down by one.
+To make editing number variables in the toolbar, I created a text box. This text box can be edited somewhat similarly to most text inputs. It is lacking some features such as, when you click in the box the cursor will always begin at the end of the value. You still can use the arrow keys to move the cursor to a spot you want to edit. This was a fun addition I made to help people play with the variables. The old version had a ticker and you could only tick up or down by one.
 
 ![Text Boxes](README_pictures/text-box.gif)
 
@@ -60,12 +60,12 @@ To make editing number variables in the toolbar, I created a text box. This text
 ## Wanderer (The Little Dudes on the Map)
 ---------------------------------------------
 
-As a fun little addition I implemented little wanderers on to the map. The intention was to have a civilization simulation run on the map. Right now the little wanderer explores all parts of land, but stays off water. Once he moves to another hex, he will linger there until he decides to leave. I did not have time to turn him into his final form, which is a tribe of people.
+As a fun little addition I implemented little wanderers who lived on the map. The intention was to have a civilization simulation run on the map. Right now the little wanderer explores all parts of land, but stays off water. Once he moves to another hex, he will linger there until he decides to leave. I did not have time to turn him into his final form, which is a tribe of people.
 
-## Improvements
+## Desired Road Map
 ---------------------
 
-If I ever get to working on this project again or trying out a different approach to generation, I want to add a less formal selection of hexes when developing. One way to do this is instead of just pulling from the front of the queue have a chance of developing off another hex instead. This would make more irregular, but entertainning continents. When you first start up the program you'll find that the generation in realtime is very programmatic with out any real randomness to the generation. I hope that this new way of generation will work better.
+If I ever get to working on this project again or trying out a different approach to generation, I want to add a less formal selection of hexes when developing. One way to do this is instead of just pulling from the front of the queue have a chance of developing off another hex instead. This would make more irregular, but entertainning continents. When you first start up the program you'll find that the generation in realtime is very structured with out any real randomness to the generation. I hope that this new way of generation will work better.
 
 Another improvement I seek to make is the obvious rendering issues. Tiles are rendered poorly and not in the correct way. I should be rendering from the edges in, top to bottom, with this tile set. The tile set has an angle view to it, instead of a top down look. This means that you will be seeing some land underneath the plains, hills, and mountains. Currently they are always visible, which is should be intended only for the edges of a land mass.
 
